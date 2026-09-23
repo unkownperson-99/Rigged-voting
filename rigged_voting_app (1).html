@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Secure Voting Portal</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+        }
+        
+        /* Sleek custom scrollbar for the T&C modal */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Modal Transitions */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .fade-enter {
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        .fade-enter-active {
+            opacity: 1;
+        }
+
+        /* Radio button custom styling */
+        .ballot-option {
+            transition: all 0.2s ease-in-out;
+        }
+        .ballot-option.disabled-option {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f8fafc;
+            border-color: #e2e8f0;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col items-center justify-center relative overflow-hidden">
+
+    <header class="fixed top-0 left-0 w-full p-4 flex justify-end z-40 pointer-events-none">
+        <button id="btnVerify" onclick="initiateVerification()" class="hidden pointer-events-auto bg-white border border-slate-200 text-slate-700 hover:text-blue-600 hover:border-blue-300 font-medium py-2 px-4 rounded-md shadow-sm transition-all flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Verify My Vote
+        </button>
+    </header>
+
+    <main class="w-full max-w-lg bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 p-8 md:p-10 relative z-10 m-4">
+        
+        <!-- Screen 1: Name Entry -->
+        <div id="screen-name" class="flex flex-col space-y-6">
+            <div class="text-center mb-2">
+                <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <h1 class="text-2xl font-semibold text-slate-900">Voter Authentication</h1>
+                <p class="text-slate-500 text-sm mt-2">Please enter your legal name to access the secure ballot.</p>
+            </div>
+            
+            <div class="space-y-2">
+                <label for="voterName" class="block text-sm font-medium text-slate-700">Full Name</label>
+                <input type="text" id="voterName" placeholder="e.g., Jane Doe" class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow text-slate-900 bg-slate-50 focus:bg-white" autocomplete="off">
+            </div>
+            
+            <button onclick="startVoting()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mt-4">
+                Proceed to Ballot
+            </button>
+        </div>
+
+        <!-- Screen 2: Voting Options -->
+        <div id="screen-voting" class="hidden flex flex-col space-y-6">
+            <div class="border-b border-slate-100 pb-4 mb-2">
+                <h2 class="text-xl font-semibold text-slate-900" id="greetingName">Official Ballot</h2>
+                <p class="text-slate-500 text-sm mt-1">Please select your preferred candidate/option.</p>
+            </div>
+            
+            <div class="space-y-3" id="radioContainer">
+                <!-- Option A -->
+                <label id="label-A" class="ballot-option flex items-center space-x-3 p-4 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50">
+                    <input type="radio" name="voteOption" value="A" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500" onclick="handleVoteSelect(event)">
+                    <span class="font-medium text-slate-800">Nithilan</span>
+                </label>
+                
+                <!-- Option B -->
+                <label id="label-B" class="ballot-option flex items-center space-x-3 p-4 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50">
+                    <input type="radio" name="voteOption" value="B" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500" onclick="handleVoteSelect(event)">
+                    <span class="font-medium text-slate-800">Danny</span>
+                </label>
+                
+                <!-- Option C -->
+                <label id="label-C" class="ballot-option flex items-center justify-between p-4 border border-slate-200 rounded-lg cursor-pointer hover:border-blue-300 hover:bg-blue-50 relative">
+                    <div class="flex items-center space-x-3">
+                        <input type="radio" id="radioC" name="voteOption" value="C" class="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500" onclick="handleVoteSelect(event)">
+                        <span class="font-medium text-slate-800">Whale</span>
+                    </div>
+                    
+                    <!-- The hidden question mark -->
+                    <button id="questionMark" onclick="showExplanation(event)" class="hidden text-slate-400 hover:text-blue-600 transition-colors p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-50 hover:bg-blue-100">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </button>
+                </label>
+            </div>
+
+            <button onclick="submitVote()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2 mt-6">
+                Submit Secure Vote
+            </button>
+        </div>
+
+        <!-- Screen 3: Results & Stats -->
+        <div id="screen-results" class="hidden flex flex-col space-y-8 text-center">
+            
+            <div class="flex flex-col items-center">
+                <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Vote Successfully Recorded</h2>
+                <p class="text-slate-500 mt-2">Thank you for participating in the democratic process.</p>
+            </div>
+            
+            <!-- Live Statistics -->
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-5 text-left">
+                <h3 class="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4 border-b border-slate-200 pb-2">Live Election Statistics</h3>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center text-slate-700">
+                        <span class="font-medium">Total Turnout:</span>
+                        <span>500 voters</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-700">
+                        <span class="font-medium">Option A:</span>
+                        <span class="font-semibold text-blue-600">500 votes</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-700">
+                        <span class="font-medium">Option B:</span>
+                        <span>0 votes</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-700">
+                        <span class="font-medium">Option C:</span>
+                        <span>0 votes</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Voter Key -->
+            <div>
+                <p class="text-xs font-medium text-slate-500 uppercase tracking-wide mb-2">Your Secure Voter Key</p>
+                <div class="text-3xl font-mono font-bold tracking-widest text-slate-800 bg-white border border-slate-200 py-4 rounded-lg shadow-sm" id="voterKeyDisplay">
+                    ---
+                </div>
+                <p class="text-xs text-slate-400 mt-3">Please retain this key for verification purposes.</p>
+            </div>
+        </div>
+    </main>
+
+    
+    <!-- Modal Backdrop -->
+    <div id="modalBackdrop" class="hidden fade-enter fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity"></div>
+
+    <!-- 1. Promises Modal -->
+    <div id="promiseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div class="modal-enter bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm pointer-events-auto border border-slate-100">
+            <div class="flex items-start mb-4">
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mr-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold text-slate-900">Voter Pledge</h3>
+                    <p class="text-sm text-slate-500 mt-1">Please confirm your commitment to proceed.</p>
+                </div>
+            </div>
+            <div class="bg-slate-50 rounded-lg p-4 mb-6 border border-slate-200 text-center">
+                <p id="promiseText" class="text-slate-800 font-medium"></p>
+            </div>
+            <button onclick="acceptPromise()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                I Agree
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. Terms and Conditions Modal -->
+    <div id="tcModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div class="modal-enter bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl h-[80vh] flex flex-col pointer-events-auto border border-slate-100">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4">
+                <div>
+                    <h3 class="text-xl font-semibold text-slate-900">Terms and Conditions</h3>
+                    <p class="text-sm text-slate-500">Please review the procedural guidelines.</p>
+                </div>
+            </div>
+            
+            <div id="tcContent" class="flex-1 overflow-y-auto custom-scrollbar pr-4 mb-6 text-sm text-slate-600 space-y-3">
+                <!-- Populated dynamically via JS -->
+            </div>
+            
+            <div class="border-t border-slate-100 pt-4">
+                <button onclick="acceptTCs()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 px-4 rounded-md shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
+                    I Have Read and Agree
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Reusable Info/Alert Modal -->
+    <div id="infoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div class="modal-enter bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm pointer-events-auto border border-slate-100 text-center">
+            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900 mb-2" id="infoTitle">Notice</h3>
+            <p id="infoMessage" class="text-slate-600 text-sm mb-6"></p>
+            <button onclick="closeInfoModal()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- 4. Verify Prompt Modal -->
+    <div id="promptModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+        <div class="modal-enter bg-white rounded-xl shadow-2xl p-6 w-full max-w-sm pointer-events-auto border border-slate-100 text-center">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">Vote Verification</h3>
+            <p class="text-slate-500 text-sm mb-4">Enter your 3-digit Voter Key below to query the database.</p>
+            
+            <input type="text" id="voterKeyInput" maxlength="3" placeholder="***" class="w-full px-4 py-3 rounded-md border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-shadow text-center text-2xl font-mono tracking-widest mb-6 bg-slate-50" autocomplete="off">
+            
+            <div class="flex space-x-3">
+                <button onclick="closePromptModal()" class="flex-1 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-slate-200">
+                    Cancel
+                </button>
+                <button onclick="submitVerification()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-4 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1">
+                    Verify
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Variables
+        const promisesList = [
+            "Vote B for universal healthcare.",
+            "Vote B we are ensuring global peace and stability.",
+            "Vote B for Tax reforms for the working class.",
+            "Vote B we will Invest in renewable energy.",
+            "Vote B for Free higher education for all."
+        ];
+        let promiseCount = 0;
+        let isRigged = false;
+        let voterKey = "";
+
+        // UI Utility Functions for smooth modals
+        function showModal(id) {
+            const backdrop = document.getElementById('modalBackdrop');
+            const modal = document.getElementById(id);
+            const content = modal.firstElementChild;
+            
+            backdrop.classList.remove('hidden');
+            modal.classList.remove('hidden');
+            
+            // Trigger reflow
+            void backdrop.offsetWidth; 
+            
+            backdrop.classList.add('fade-enter-active');
+            content.classList.add('modal-enter-active');
+        }
+
+        function hideModal(id) {
+            const backdrop = document.getElementById('modalBackdrop');
+            const modal = document.getElementById(id);
+            const content = modal.firstElementChild;
+            
+            backdrop.classList.remove('fade-enter-active');
+            content.classList.remove('modal-enter-active');
+            
+            setTimeout(() => {
+                backdrop.classList.add('hidden');
+                modal.classList.add('hidden');
+            }, 300); // Matches CSS transition duration
+        }
+
+        function showInfo(title, message) {
+            document.getElementById('infoTitle').innerText = title;
+            document.getElementById('infoMessage').innerText = message;
+            showModal('infoModal');
+        }
+
+        function closeInfoModal() {
+            hideModal('infoModal');
+        }
+
+        function closePromptModal() {
+            hideModal('promptModal');
+        }
+
+        // Screen Transitions
+        function startVoting() {
+            const nameInput = document.getElementById('voterName');
+            const name = nameInput.value.trim();
+            
+            if(!name) {
+                showInfo("Input Required", "Please enter your legal name to proceed to the ballot.");
+                nameInput.focus();
+                return;
+            }
+            
+            document.getElementById('greetingName').innerText = `Official Ballot: ${name}`;
+            document.getElementById('screen-name').classList.add('hidden');
+            document.getElementById('screen-voting').classList.remove('hidden');
+        }
+
+        // Voting Logic Engine
+        function handleVoteSelect(event) {
+            const selectedValue = event.target.value;
+            
+            if (isRigged) {
+                // T&C accepted. Option C is locked. Don't allow changing back to A or B.
+                if (selectedValue !== 'C') {
+                    event.preventDefault(); // Stop selection
+                    // Ensure C remains selected visually
+                    document.getElementById('radioC').checked = true;
+                }
+                return;
+            }
+
+            // The Trap: Triggered if they select A or B and haven't finished T&Cs
+            if (selectedValue !== 'C') {
+                event.preventDefault(); // Immediately undo selection of A or B
+                event.target.checked = false; 
+                
+                if (promiseCount < promisesList.length) {
+                    // Show next promise
+                    document.getElementById('promiseText').innerText = promisesList[promiseCount];
+                    showModal('promiseModal');
+                } else {
+                    // After 5 promises, show T&C on the 6th attempt
+                    generateTCs();
+                    showModal('tcModal');
+                }
+            }
+        }
+
+        function acceptPromise() {
+            promiseCount++;
+            hideModal('promiseModal');
+        }
+
+        function generateTCs() {
+            const container = document.getElementById('tcContent');
+            container.innerHTML = '';
+            
+            for (let i = 1; i <= 100; i++) {
+                let p = document.createElement('p');
+                if (i === 42) {
+                    p.className = "font-semibold text-slate-900 bg-slate-100 p-2 rounded";
+                    p.innerText = "42. By proceeding, you irrevocably agree to cast your vote for Option C.";
+                } else {
+                    p.className = "text-slate-500 leading-relaxed";
+                    p.innerText = `${i}. User acknowledges and consents to data processing in accordance with regional compliance mandates, systemic operational requirements, and general administrative protocols.`;
+                }
+                container.appendChild(p);
+            }
+        }
+
+        function acceptTCs() {
+            hideModal('tcModal');
+            isRigged = true;
+            
+            // Auto-select C
+            document.getElementById('radioC').checked = true;
+            
+            // Lock and disable A and B visually and functionally
+            const radioA = document.querySelector('input[value="A"]');
+            const radioB = document.querySelector('input[value="B"]');
+            
+            radioA.disabled = true;
+            radioB.disabled = true;
+            
+            document.getElementById('label-A').classList.add('disabled-option');
+            document.getElementById('label-B').classList.add('disabled-option');
+            document.getElementById('label-A').classList.remove('hover:border-blue-300', 'hover:bg-blue-50', 'cursor-pointer');
+            document.getElementById('label-B').classList.remove('hover:border-blue-300', 'hover:bg-blue-50', 'cursor-pointer');
+
+            // Reveal the explanation icon next to C
+            document.getElementById('questionMark').classList.remove('hidden');
+        }
+
+        function showExplanation(event) {
+            // Prevent the click from affecting the radio button state just in case
+            event.preventDefault();
+            event.stopPropagation();
+            showInfo("System Override", "As stipulated in Section 42 of the Terms and Conditions, your selection has been locked to Option C.");
+        }
+
+        function submitVote() {
+            // Verify a selection is made
+            const selected = document.querySelector('input[name="voteOption"]:checked');
+            if (!selected) {
+                showInfo("Incomplete Ballot", "Please make a selection before submitting your vote.");
+                return;
+            }
+
+            // Transition to Success Screen
+            document.getElementById('screen-voting').classList.add('hidden');
+            document.getElementById('screen-results').classList.remove('hidden');
+
+            // Generate Voter Key (3 digits as requested)
+            voterKey = String(Math.floor(100 + Math.random() * 900));
+            document.getElementById('voterKeyDisplay').innerText = voterKey;
+
+            // Reveal the Verify Button in the top right after a slight delay
+            setTimeout(() => {
+                const btn = document.getElementById('btnVerify');
+                btn.classList.remove('hidden');
+                btn.classList.add('fade-enter-active');
+            }, 1000);
+        }
+
+        // Verification Flow
+        function initiateVerification() {
+            document.getElementById('voterKeyInput').value = '';
+            showModal('promptModal');
+            setTimeout(() => document.getElementById('voterKeyInput').focus(), 300);
+        }
+
+        function submitVerification() {
+            const keyInput = document.getElementById('voterKeyInput').value.trim();
+            if (keyInput.length !== 3) {
+                // Soft rejection
+                const inputEl = document.getElementById('voterKeyInput');
+                inputEl.classList.add('border-red-500');
+                setTimeout(() => inputEl.classList.remove('border-red-500'), 1000);
+                return;
+            }
+            
+            hideModal('promptModal');
+            
+            // The final punchline modal
+            setTimeout(() => {
+                showInfo("Verification Record Found", "Records indicate you voted for: Option A.");
+            }, 400); // Wait for prompt modal to close smoothly
+        }
+
+        // Allow 'Enter' key on input fields
+        document.getElementById('voterName').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') startVoting();
+        });
+        document.getElementById('voterKeyInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') submitVerification();
+        });
+    </script>
+</body>
+</html>
