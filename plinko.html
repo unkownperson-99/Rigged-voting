@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cascada de Coneixements</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --black: #111111; --red: #D42B2B; --red-dark: #A01E1E; --red-light: #FF4444;
+    --grey-dark: #2a2a2a; --grey-mid: #444444; --grey-light: #888888;
+    --grey-pale: #cccccc; --white: #f5f5f5;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Nunito', sans-serif; background: var(--black); color: var(--white); overflow-x: hidden; }
+  .peg-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; background-image: radial-gradient(circle, #333 1.5px, transparent 1.5px); background-size: 40px 40px; opacity: 0.35; }
+  section, nav, footer, .cta-band, .grey-band { position: relative; z-index: 1; }
+
+  /* NAV */
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 2.5rem; background: rgba(17,17,17,0.92); border-bottom: 2px solid var(--red); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(6px); }
+  .nav-logo { font-family: 'Boogaloo', cursive; font-size: 1.5rem; color: var(--red); letter-spacing: 1px; cursor: pointer; }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--grey-pale); text-decoration: none; font-weight: 700; font-size: 0.9rem; letter-spacing: 0.5px; transition: color 0.2s; text-transform: uppercase; }
+  .nav-links a:hover { color: var(--red); }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem 2rem; gap: 1.5rem; overflow: hidden; }
+  .hero-badge { background: var(--red); color: white; font-family: 'Boogaloo', cursive; font-size: 1rem; letter-spacing: 2px; padding: 0.4rem 1.4rem; border-radius: 999px; display: inline-block; animation: bounce-in 0.6s cubic-bezier(.36,2,.6,.8) both; }
+  .hero-title { font-family: 'Boogaloo', cursive; font-size: clamp(3rem, 10vw, 7rem); line-height: 1; letter-spacing: -1px; animation: drop-in 0.8s cubic-bezier(.36,1.5,.6,.9) 0.1s both; }
+  .hero-title .red { color: var(--red); }
+  .hero-title .grey { color: var(--grey-light); }
+  .hero-sub { font-size: clamp(1rem, 2.5vw, 1.4rem); color: var(--grey-pale); max-width: 560px; line-height: 1.6; animation: drop-in 0.8s cubic-bezier(.36,1.5,.6,.9) 0.25s both; }
+  .hero-cta-group { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; animation: drop-in 0.8s cubic-bezier(.36,1.5,.6,.9) 0.4s both; }
+
+  /* BUTTONS */
+  .btn { font-family: 'Boogaloo', cursive; font-size: 1.2rem; letter-spacing: 1px; padding: 0.8rem 2.2rem; border-radius: 12px; border: 3px solid transparent; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; text-decoration: none; display: inline-block; }
+  .btn:hover { transform: translateY(-3px) scale(1.04); }
+  .btn:active { transform: scale(0.97); }
+  .btn-red { background: var(--red); color: white; }
+  .btn-red:hover { background: var(--red-light); }
+  .btn-outline { background: transparent; border-color: var(--grey-mid); color: var(--grey-pale); }
+  .btn-outline:hover { border-color: var(--red); color: var(--red); }
+  .btn-black { background: var(--black); color: white; border: 3px solid transparent; }
+  .btn-black:hover { background: var(--grey-dark); }
+
+  /* PLINKO MINI */
+  .plinko-vis { position: relative; width: 260px; height: 300px; animation: drop-in 1s cubic-bezier(.36,1.5,.6,.9) 0.5s both; }
+  .peg { position: absolute; width: 12px; height: 12px; border-radius: 50%; background: var(--grey-mid); border: 2px solid var(--grey-light); }
+  .ball { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--red); border: 3px solid var(--red-light); animation: ball-fall 2.5s ease-in-out infinite; top: -10px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 12px var(--red); }
+  .slot { position: absolute; bottom: 0; height: 34px; border-radius: 6px 6px 0 0; display: flex; align-items: center; justify-content: center; font-family: 'Boogaloo', cursive; font-size: 0.8rem; color: white; }
+
+  @keyframes ball-fall { 0% { top: -10px; left: 50%; transform: translateX(-50%); } 20% { top: 60px; left: 38%; } 40% { top: 120px; left: 58%; } 60% { top: 180px; left: 42%; } 80% { top: 230px; left: 52%; } 100% { top: 270px; left: 45%; opacity: 0; } }
+  @keyframes bounce-in { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+  @keyframes drop-in { 0% { transform: translateY(-40px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+
+  .zigzag { height: 28px; background: linear-gradient(135deg, var(--grey-dark) 25%, transparent 25%) -20px 0, linear-gradient(225deg, var(--grey-dark) 25%, transparent 25%) -20px 0, linear-gradient(315deg, var(--grey-dark) 25%, transparent 25%), linear-gradient(45deg, var(--grey-dark) 25%, transparent 25%); background-size: 40px 28px; background-color: var(--black); }
+
+  .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-tag { font-family: 'Boogaloo', cursive; color: var(--red); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 0.5rem; }
+  .section-title { font-family: 'Boogaloo', cursive; font-size: clamp(2rem, 5vw, 3.5rem); line-height: 1.1; margin-bottom: 1rem; }
+  .grey-band { background: var(--grey-dark); }
+
+  /* CARDS */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
+  .card { background: var(--black); border: 2px solid var(--grey-mid); border-radius: 16px; padding: 1.8rem 1.5rem; transition: border-color 0.2s, transform 0.2s; cursor: default; }
+  .card:hover { border-color: var(--red); transform: translateY(-4px) rotate(-0.5deg); }
+  .card-icon { font-size: 2.5rem; margin-bottom: 0.8rem; display: block; line-height: 1; }
+  .card-title { font-family: 'Boogaloo', cursive; font-size: 1.4rem; color: var(--white); margin-bottom: 0.4rem; }
+  .card-desc { font-size: 0.9rem; color: var(--grey-pale); line-height: 1.6; }
+
+  /* STEPS — no hover animation */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2.5rem; }
+  .step { background: var(--grey-dark); border-left: 4px solid var(--red); border-radius: 0 12px 12px 0; padding: 1.2rem 1.2rem 1.2rem 1.4rem; }
+  .step-num { font-family: 'Boogaloo', cursive; font-size: 2.5rem; color: var(--red); line-height: 1; margin-bottom: 0.3rem; }
+  .step-title { font-family: 'Boogaloo', cursive; font-size: 1.1rem; margin-bottom: 0.3rem; }
+  .step-text { font-size: 0.85rem; color: var(--grey-pale); line-height: 1.5; }
+
+  /* CATEGORIES */
+  .cats { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 2rem; }
+  .cat-pill { font-family: 'Boogaloo', cursive; font-size: 1rem; padding: 0.5rem 1.3rem; border-radius: 999px; border: 2px solid; cursor: default; letter-spacing: 0.5px; }
+  .cat-r { border-color: var(--red); color: var(--red); }
+  .cat-g { border-color: var(--grey-light); color: var(--grey-pale); }
+  .cat-w { border-color: var(--white); color: var(--white); }
+
+  /* SCOREBOARD */
+  .scoreboard { background: var(--grey-dark); border: 3px dashed var(--grey-mid); border-radius: 20px; padding: 2rem; margin-top: 2.5rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; text-align: center; }
+  .score-num { font-family: 'Boogaloo', cursive; font-size: 3rem; color: var(--red); line-height: 1; }
+  .score-label { font-size: 0.85rem; color: var(--grey-pale); text-transform: uppercase; letter-spacing: 1px; margin-top: 0.3rem; }
+
+  /* CTA BAND */
+  .cta-band { background: var(--red); padding: 4rem 2rem; text-align: center; }
+  .cta-band h2 { font-family: 'Boogaloo', cursive; font-size: clamp(2rem, 5vw, 3.5rem); color: white; margin-bottom: 1rem; }
+  .cta-band p { color: rgba(255,255,255,0.85); font-size: 1rem; margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto; }
+
+  /* TICKER */
+  .ticker-wrap { background: var(--red); overflow: hidden; padding: 0.5rem 0; }
+  .ticker { display: flex; width: max-content; animation: ticker 20s linear infinite; }
+  .ticker-item { font-family: 'Boogaloo', cursive; font-size: 1rem; color: white; padding: 0 2rem; white-space: nowrap; letter-spacing: 1px; }
+  @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+  /* BOARD */
+  .board-container { display: flex; justify-content: center; margin-top: 2.5rem; }
+  svg.board { filter: drop-shadow(0 8px 24px rgba(212,43,43,0.3)); }
+
+  /* TEAM */
+  .team { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; margin-top: 2.5rem; }
+  .team-card { background: var(--grey-dark); border-radius: 16px; padding: 1.5rem 1rem; text-align: center; border: 2px solid var(--grey-mid); transition: border-color 0.2s, transform 0.2s; cursor: default; }
+  .team-card:hover { border-color: var(--red); transform: translateY(-3px) rotate(1deg); }
+  .team-avatar { width: 60px; height: 60px; border-radius: 50%; background: var(--grey-mid); margin: 0 auto 0.8rem; display: flex; align-items: center; justify-content: center; font-family: 'Boogaloo', cursive; font-size: 1.4rem; color: var(--red); border: 3px solid var(--red); }
+  .team-name { font-family: 'Boogaloo', cursive; font-size: 1rem; color: var(--white); margin-bottom: 0.2rem; }
+  .team-role { font-size: 0.8rem; color: var(--grey-light); }
+
+  /* MODAL */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 999; display: none; align-items: center; justify-content: center; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: var(--grey-dark); border: 2px solid var(--red); border-radius: 20px; padding: 2.5rem 2rem; max-width: 460px; width: 90%; position: relative; animation: bounce-in 0.3s cubic-bezier(.36,1.5,.6,.9); }
+  .modal h2 { font-family: 'Boogaloo', cursive; font-size: 1.8rem; color: var(--red); margin-bottom: 0.6rem; }
+  .modal p { color: var(--grey-pale); line-height: 1.6; font-size: 0.95rem; margin-bottom: 1.2rem; }
+  .modal-close { position: absolute; top: 1rem; right: 1.2rem; font-family: 'Boogaloo', cursive; font-size: 1.5rem; color: var(--grey-light); cursor: pointer; background: none; border: none; }
+  .modal-close:hover { color: var(--red); }
+
+  footer { background: var(--grey-dark); border-top: 2px solid var(--grey-mid); padding: 2rem; text-align: center; }
+  .footer-logo { font-family: 'Boogaloo', cursive; font-size: 1.8rem; color: var(--red); margin-bottom: 0.5rem; }
+  footer p { color: var(--grey-light); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<div class="peg-bg"></div>
+
+<!-- GAME DEMO OVERLAY -->
+<div id="game-demo-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.93);z-index:1001;overflow-y:auto;padding:1rem 0.5rem;">
+  <div style="max-width:480px;margin:0 auto;background:#2a2a2a;border:3px solid #D42B2B;border-radius:20px;padding:1.5rem;position:relative;">
+    <button onclick="closeGameDemo()" style="position:absolute;top:1rem;right:1.2rem;font-family:'Boogaloo',cursive;font-size:1.5rem;color:#888;background:none;border:none;cursor:pointer;line-height:1;">✕</button>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:1rem;">
+      <div style="font-family:'Boogaloo',cursive;color:#D42B2B;font-size:1.6rem;letter-spacing:1px;">🎲 DEMO DEL JOC</div>
+      <div id="gd-hud" style="font-family:'Boogaloo',cursive;font-size:1rem;color:#ccc;margin-top:0.2rem;">
+        Punts: <span id="gd-score">0</span> &nbsp;·&nbsp; Ronda <span id="gd-round">1</span> / 5
+      </div>
+    </div>
+
+    <!-- SCREEN: Question -->
+    <div id="gd-screen-question">
+      <div id="gd-question" style="font-family:'Boogaloo',cursive;font-size:1.15rem;color:white;text-align:center;padding:1rem;background:#111;border-radius:12px;border:2px solid #444;margin-bottom:0.8rem;line-height:1.4;"></div>
+      <div id="gd-options" style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;"></div>
+      <div id="gd-feedback" style="display:none;text-align:center;margin-top:0.8rem;font-family:'Boogaloo',cursive;font-size:1.2rem;"></div>
+      <div id="gd-lane-box" style="display:none;margin-top:0.8rem;text-align:center;">
+        <div style="font-family:'Boogaloo',cursive;color:#ccc;font-size:0.95rem;margin-bottom:0.5rem;">Tria el canal de llançament:</div>
+        <div id="gd-lanes" style="display:flex;gap:0.5rem;justify-content:center;"></div>
+      </div>
+    </div>
+
+    <!-- SCREEN: Dropping (canvas) -->
+    <div id="gd-screen-board" style="text-align:center;margin-top:0.8rem;">
+      <canvas id="gd-canvas" width="700" height="500" style="border-radius:12px;max-width:100%;display:block;margin:0 auto;background:#111;"></canvas>
+      <div id="gd-slot-label" style="font-family:'Boogaloo',cursive;font-size:1.8rem;color:#D42B2B;margin-top:0.6rem;min-height:2.2rem;"></div>
+    </div>
+
+    <!-- SCREEN: Next round button -->
+    <div id="gd-next-area" style="display:none;text-align:center;margin-top:0.8rem;">
+      <button class="btn btn-red" onclick="gdNextRound()">Següent Ronda →</button>
+    </div>
+
+    <!-- SCREEN: Final -->
+    <div id="gd-screen-final" style="display:none;text-align:center;padding:0.5rem;">
+      <div style="font-family:'Boogaloo',cursive;font-size:1.6rem;color:#D42B2B;margin-bottom:0.3rem;">🏆 Final del Demo!</div>
+      <div style="font-family:'Boogaloo',cursive;font-size:3.5rem;color:white;line-height:1;" id="gd-final-score"></div>
+      <div style="font-size:0.9rem;color:#ccc;margin:0.6rem 0 1.2rem;" id="gd-final-msg"></div>
+      <button class="btn btn-red" onclick="startGameDemo()">Jugar de Nou 🔄</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL (shared) -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modal-title">Títol</h2>
+    <p id="modal-body">Cos del modal.</p>
+    <button class="btn btn-red" onclick="closeModal()">Tancar</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo" onclick="scrollTop()">🔴 Cascada</span>
+  <ul class="nav-links">
+    <li><a href="#joc">El Joc</a></li>
+    <li><a href="#com-jugar">Com Jugar</a></li>
+    <li><a href="#categories">Categories</a></li>
+    <li><a href="#equip">Equip</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <span class="hero-badge">🎲 El Joc de Preguntes Definitiu</span>
+  <h1 class="hero-title">
+    <span class="red">Cascada</span><br><span>de</span><br><span class="grey">Coneixements</span>
+  </h1>
+  <p class="hero-sub">El joc de tauler on les respostes cauen com una cascada! Respon preguntes, guanya punts i desbanca als teus rivals.</p>
+  <div class="hero-cta-group">
+    <a href="#com-jugar" class="btn btn-red">Com es Juga ↓</a>
+    <button class="btn btn-outline" onclick="openModal('Sobre el Joc','La Cascada de Coneixements és un joc de tauler educatiu que combina la mecànica Plinko amb preguntes de cultura general. Ideal per a 2–6 jugadors, a partir de 8 anys. Aprèn jugant!')">Descobreix Més</button>
+  </div>
+
+  <div class="plinko-vis">
+    <div class="ball"></div>
+    <div class="peg" style="top:50px;left:80px"></div><div class="peg" style="top:50px;left:130px"></div><div class="peg" style="top:50px;left:180px"></div>
+    <div class="peg" style="top:100px;left:55px"></div><div class="peg" style="top:100px;left:105px"></div><div class="peg" style="top:100px;left:155px"></div><div class="peg" style="top:100px;left:205px"></div>
+    <div class="peg" style="top:150px;left:80px"></div><div class="peg" style="top:150px;left:130px"></div><div class="peg" style="top:150px;left:180px"></div>
+    <div class="peg" style="top:200px;left:55px"></div><div class="peg" style="top:200px;left:105px"></div><div class="peg" style="top:200px;left:155px"></div><div class="peg" style="top:200px;left:205px"></div>
+    <div class="slot" style="left:10px;width:52px;background:#333;">5</div>
+    <div class="slot" style="left:65px;width:52px;background:#A01E1E;">10</div>
+    <div class="slot" style="left:120px;width:52px;background:#D42B2B;">20</div>
+    <div class="slot" style="left:175px;width:52px;background:#A01E1E;">10</div>
+    <div class="slot" style="left:230px;width:52px;background:#333;">5</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">🎲 RESPON · GUANYA · CAIENT · PREGUNTES · CONEIXEMENTS · DIVERSIÓ · EQUIPS · ESTRATÈGIA ·</span>
+    <span class="ticker-item">🎲 RESPON · GUANYA · CAIENT · PREGUNTES · CONEIXEMENTS · DIVERSIÓ · EQUIPS · ESTRATÈGIA ·</span>
+  </div>
+</div>
+
+<div class="zigzag"></div>
+
+<!-- QUÈ ÉS -->
+<section id="joc">
+  <div class="section">
+    <p class="section-tag">El Joc</p>
+    <h2 class="section-title">Mecànica Plinko<br>+ Preguntes = 💥</h2>
+    <p style="color:var(--grey-pale);max-width:600px;line-height:1.7;">La <strong style="color:var(--white)">Cascada de Coneixements</strong> combina l'emoció d'un tauler Plinko amb preguntes de cultura general. Respon correctament per controlar on cau la fitxa i acumula la puntuació màxima!</p>
+    <div class="cards">
+      <div class="card" onclick="openModal('Deixa Caure 🔴','Llança la fitxa pel tauler de perns i veu on aterrarà. Cada carril té una puntuació diferent: 5, 10 o 20 punts. Escull bé el canal de llançament!')" style="cursor:pointer">
+        <span class="card-icon">🔴</span>
+        <div class="card-title">Deixa Caure</div>
+        <div class="card-desc">Llança la fitxa pel tauler de perns i veu on aterrarà. Cada carril val punts diferents!</div>
+      </div>
+      <div class="card" onclick="openModal('Respon Preguntes 🧠','Tens 30 segons per respondre. Si encertes, pots triar el canal de llançament. Si falles, el canal és aleatori. Hi ha 200 preguntes en 8 categories!')" style="cursor:pointer">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Respon Preguntes</div>
+        <div class="card-desc">Respondre correctament et dóna un avantatge extra: pots empènyer la fitxa cap als carrils de més punts.</div>
+      </div>
+      <div class="card" onclick="openModal('Bonus Especials ⚡','Algunes caselles del tauler activen events especials: roba punts a un rival, juga un torn extra, o fes una pregunta doble per duplicar la teva puntuació!')" style="cursor:pointer">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Bonus Especials</div>
+        <div class="card-desc">Caselles especials al tauler activen reptes, intercanvis de punts o torns extres!</div>
+      </div>
+      <div class="card" onclick="openModal('Guanya la Cascada 🏆','El jugador amb més punts al final de les 5 rondes guanya el títol de Mestre del Coneixement i el trofeu de la Cascada. Prepareu-vos per a la batalla intel·lectual!')" style="cursor:pointer">
+        <span class="card-icon">🏆</span>
+        <div class="card-title">Guanya la Cascada</div>
+        <div class="card-desc">El jugador amb més punts al final de les rondes guanya el títol de Mestre del Coneixement.</div>
+      </div>
+    </div>
+
+    <div class="scoreboard">
+      <div class="score-item"><div class="score-num">2–6</div><div class="score-label">Jugadors</div></div>
+      <div class="score-item"><div class="score-num">30'</div><div class="score-label">Durada</div></div>
+      <div class="score-item"><div class="score-num">+8</div><div class="score-label">Edat</div></div>
+      <div class="score-item"><div class="score-num">200</div><div class="score-label">Preguntes</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="zigzag" style="transform:scaleY(-1);background:var(--grey-dark);"></div>
+
+<!-- COM JUGAR -->
+<div class="grey-band">
+  <section id="com-jugar">
+    <div class="section">
+      <p class="section-tag">Com Jugar</p>
+      <h2 class="section-title">En 5 Passos<br>Senzills</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-title">Prepareu el Tauler</div>
+          <div class="step-text">Munteu el tauler Plinko sobre la taula i repartiu les fitxes de cada jugador.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-title">Gireu la Targeta</div>
+          <div class="step-text">El jugador actiu tria una categoria i es llegeix la pregunta en veu alta.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-title">Deixa Caure</div>
+          <div class="step-text">Llança la fitxa pel canal escollit i observa on acaba entre els perns.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-title">Respon!</div>
+          <div class="step-text">Tens 30 segons. Encertar la resposta et dona el control complet de la fitxa.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-title">Suma Punts</div>
+          <div class="step-text">Anota els punts del carril on ha caigut la fitxa. Guanya qui en tingui més al final!</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="zigzag" style="background:var(--grey-dark);"></div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="section">
+    <p class="section-tag">Categories</p>
+    <h2 class="section-title">Quin<br>Coneixement Tens?</h2>
+    <p style="color:var(--grey-pale);max-width:560px;line-height:1.7;">Cada tirada comença triant una categoria. Domina les que coneixes i sorprèn els rivals en les que menys esperen!</p>
+    <div class="cats">
+      <span class="cat-pill cat-r">🔬 Ciències</span>
+      <span class="cat-pill cat-g">📚 Llengua</span>
+      <span class="cat-pill cat-w">🗺️ Geografia</span>
+      <span class="cat-pill cat-g">📐 Mates</span>
+      <span class="cat-pill cat-w">⚽ Esports</span>
+      <span class="cat-pill cat-g">💻 Tecnologia</span>
+      <span class="cat-pill cat-r">🏛️ Història</span>
+      <span class="cat-pill cat-w">🍕 Cultura Pop</span>
+    </div>
+
+    <div class="board-container">
+      <svg class="board" width="320" height="260" viewBox="0 0 320 260" xmlns="http://www.w3.org/2000/svg">
+        <rect width="320" height="260" rx="16" fill="#2a2a2a" stroke="#444" stroke-width="2"/>
+        <rect x="140" y="8" width="40" height="16" rx="8" fill="#D42B2B"/>
+        <text x="160" y="20" text-anchor="middle" font-family="Boogaloo,cursive" font-size="9" fill="white">ENTRA</text>
+        <g fill="#888" stroke="#ccc" stroke-width="1">
+          <circle cx="80" cy="60" r="6"/><circle cx="120" cy="60" r="6"/><circle cx="160" cy="60" r="6"/><circle cx="200" cy="60" r="6"/><circle cx="240" cy="60" r="6"/>
+          <circle cx="60" cy="100" r="6"/><circle cx="100" cy="100" r="6"/><circle cx="140" cy="100" r="6"/><circle cx="180" cy="100" r="6"/><circle cx="220" cy="100" r="6"/><circle cx="260" cy="100" r="6"/>
+          <circle cx="80" cy="140" r="6"/><circle cx="120" cy="140" r="6"/><circle cx="160" cy="140" r="6"/><circle cx="200" cy="140" r="6"/><circle cx="240" cy="140" r="6"/>
+          <circle cx="60" cy="180" r="6"/><circle cx="100" cy="180" r="6"/><circle cx="140" cy="180" r="6"/><circle cx="180" cy="180" r="6"/><circle cx="220" cy="180" r="6"/><circle cx="260" cy="180" r="6"/>
+        </g>
+        <g font-family="Boogaloo,cursive" font-size="11" text-anchor="middle">
+          <rect x="10" y="220" width="50" height="32" rx="6" fill="#333"/><text x="35" y="240" fill="#ccc">+5</text>
+          <rect x="65" y="220" width="50" height="32" rx="6" fill="#A01E1E"/><text x="90" y="240" fill="white">+10</text>
+          <rect x="120" y="220" width="50" height="32" rx="6" fill="#D42B2B"/><text x="145" y="240" fill="white">+20</text>
+          <rect x="175" y="220" width="50" height="32" rx="6" fill="#D42B2B"/><text x="200" y="240" fill="white">+20</text>
+          <rect x="230" y="220" width="50" height="32" rx="6" fill="#A01E1E"/><text x="255" y="240" fill="white">+10</text>
+          <rect x="285" y="220" width="25" height="32" rx="6" fill="#333"/><text x="298" y="240" fill="#ccc">+5</text>
+        </g>
+        <circle r="8" fill="#FF4444" stroke="#FF8888" stroke-width="2">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M 160 24 L 140 60 L 160 100 L 140 140 L 160 180 L 145 220"/>
+        </circle>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<div class="cta-band">
+  <h2>Preparats per la Cascada?</h2>
+  <p>Reuniu els amics, prepareu les preguntes i que comenci la diversió!</p>
+  <button class="btn btn-black" onclick="startGameDemo()">🎲 Juga al Demo!</button>
+</div>
+
+<!-- EQUIP -->
+<section id="equip">
+  <div class="section">
+    <p class="section-tag">Equip</p>
+    <h2 class="section-title">Els Creadors<br>del Caos</h2>
+    <p style="color:var(--grey-pale);max-width:560px;line-height:1.7;margin-bottom:0;">Un grup de ments brillants que van decidir que aprendre havia de ser tan divertit com llançar fitxes per un tauler.</p>
+    <div class="team">
+      <div class="team-card" onclick="openModal('Disseny 🎲','Responsable del tauler físic i les mecàniques de joc. Va dissenyar el sistema de perns, els carrils de puntuació i les regles de bonus especials.')" style="cursor:pointer">
+        <div class="team-avatar">🎲</div>
+        <div class="team-name">Disseny</div>
+        <div class="team-role">Tauler & Mecàniques</div>
+      </div>
+      <div class="team-card" onclick="openModal('Continguts 📝','Ha escrit les 200 preguntes del joc repartides en 8 categories. Cada pregunta ha estat revisada per assegurar que és justa, divertida i educativa.')" style="cursor:pointer">
+        <div class="team-avatar">📝</div>
+        <div class="team-name">Continguts</div>
+        <div class="team-role">Preguntes & Categories</div>
+      </div>
+      <div class="team-card" onclick="openModal('Il·lustració 🎨','Responsable de la identitat visual del joc: colors, logotip, targetes i tauler. Ha creat un estil juganer i reconeixible.')" style="cursor:pointer">
+        <div class="team-avatar">🎨</div>
+        <div class="team-name">Il·lustració</div>
+        <div class="team-role">Visual & Identitat</div>
+      </div>
+      <div class="team-card" onclick="openModal('Playtest 🧪','Ha fet desenes de partides de prova amb grups reals per equilibrar la dificultat de les preguntes i la puntuació de cada carril del tauler.')" style="cursor:pointer">
+        <div class="team-avatar">🧪</div>
+        <div class="team-name">Playtest</div>
+        <div class="team-role">Proves & Equilibri</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;">
+      <button class="btn btn-red" onclick="openModal('Contacte 📬','Voleu contactar amb l\'equip de Cascada de Coneixements? Envieu-nos un missatge a cascada@coneixements.cat i us respondrem el més aviat possible!')">Contacta l'Equip</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🔴 Cascada de Coneixements</div>
+  <p>Fet amb ❤️ i moltes preguntes · Projecte Educatiu · 2025</p>
+  <div style="margin-top:1rem;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <button class="btn btn-outline" style="font-size:0.85rem;padding:0.4rem 1rem;" onclick="openModal('Privacitat 🔒','Aquest lloc web no recull cap dada personal. És un projecte educatiu sense ànim de lucre creat per estudiants.')">Privacitat</button>
+    <button class="btn btn-outline" style="font-size:0.85rem;padding:0.4rem 1rem;" onclick="openModal('Crèdits 🏅','Cascada de Coneixements és un projecte educatiu original. Disseny, contingut i programació realitzats per l\'equip del projecte. Tots els drets reservats.')">Crèdits</button>
+  </div>
+</footer>
+
+<script>
+  function openModal(title, body) {
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-body').textContent = body;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+  }
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+  // ─── GAME DEMO ────────────────────────────────────────────────────────────
+  const GD_QUESTIONS = [
+    { q: "Quina és la capital de França?",                opts: ["Londres","París","Madrid","Roma"],               ans: 1 },
+    { q: "Quants planetes té el Sistema Solar?",          opts: ["6","7","8","10"],                                ans: 2 },
+    { q: "Qui va pintar la Mona Lisa?",                   opts: ["Miquel Àngel","Rembrandt","Da Vinci","Picasso"], ans: 2 },
+    { q: "Quin és el planeta més gran del Sistema Solar?",opts: ["Saturn","Júpiter","Neptú","Terra"],              ans: 1 },
+    { q: "En quin any va acabar la 2a Guerra Mundial?",   opts: ["1943","1944","1945","1946"],                     ans: 2 },
+  ];
+  const GD_SCORES = [5, 10, 20, 30, 20, 10, 5];
+  const GD_COLORS = ["#333","#A01E1E","#D42B2B","#FF4444","#D42B2B","#A01E1E","#333"];
+
+  // Triangular board geometry - narrower rectangle
+  const TRI_APEX_X = 350, TRI_APEX_Y = 40;
+  const TRI_BASE_Y = 380;
+  const TRI_BASE_L = 150,  TRI_BASE_R = 550;
+  const SLOT_W = (TRI_BASE_R - TRI_BASE_L) / GD_SCORES.length; // 50px each
+
+  // Triangular peg layout: 6 rows, 50px horizontal spacing between pegs
+  const PEG_ROWS = [
+    { y: 100,  xs: [350] },
+    { y: 150,  xs: [325, 375] },
+    { y: 200,  xs: [300, 350, 400] },
+    { y: 250,  xs: [275, 325, 375, 425] },
+    { y: 300,  xs: [250, 300, 350, 400, 450] },
+    { y: 350,  xs: [225, 275, 325, 375, 425, 475] },
+  ];
+  const PEG_R = 7, BALL_R = 10;
+
+  let gdState  = {};
+  let gdAimX   = TRI_APEX_X;
+
+  function startGameDemo() {
+    gdState = { round: 0, score: 0, answered: false, animId: null, phase: 'question' };
+    document.getElementById('game-demo-overlay').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    gdBindCanvas();
+    gdShowQuestion();
+  }
+
+  function closeGameDemo() {
+    if (gdState.animId) cancelAnimationFrame(gdState.animId);
+    document.getElementById('game-demo-overlay').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+
+  function gdBindCanvas() {
+    // Clone to wipe old listeners, then re-attach
+    const old = document.getElementById('gd-canvas');
+    const c   = old.cloneNode(true);
+    old.parentNode.replaceChild(c, old);
+
+    c.addEventListener('mousemove', e => {
+      if (gdState.phase !== 'aiming') return;
+      const r = c.getBoundingClientRect();
+      gdAimX  = (e.clientX - r.left) * (c.width / r.width);
+      gdDrawBoard(null, -1, true);
+    });
+    c.addEventListener('click', () => {
+      if (gdState.phase !== 'aiming') return;
+      gdState.phase = 'dropping';
+      c.style.cursor = 'default';
+      const vx = (Math.max(200, Math.min(500, gdAimX)) - TRI_APEX_X) / 30 * 2;
+      gdDropBall(vx);
+    });
+    c.addEventListener('touchmove', e => {
+      e.preventDefault();
+      if (gdState.phase !== 'aiming') return;
+      const r = c.getBoundingClientRect();
+      gdAimX  = (e.touches[0].clientX - r.left) * (c.width / r.width);
+      gdDrawBoard(null, -1, true);
+    }, { passive: false });
+    c.addEventListener('touchend', () => {
+      if (gdState.phase !== 'aiming') return;
+      gdState.phase = 'dropping';
+      c.style.cursor = 'default';
+      const vx = (Math.max(200, Math.min(500, gdAimX)) - TRI_APEX_X) / 30 * 2;
+      gdDropBall(vx);
+    });
+  }
+
+  function gdShowQuestion() {
+    const q = GD_QUESTIONS[gdState.round];
+    document.getElementById('gd-round').textContent = gdState.round + 1;
+    document.getElementById('gd-score').textContent = gdState.score;
+    document.getElementById('gd-screen-final').style.display   = 'none';
+    document.getElementById('gd-screen-question').style.display = '';
+    document.getElementById('gd-feedback').style.display        = 'none';
+    document.getElementById('gd-lane-box').style.display        = 'none';
+    document.getElementById('gd-next-area').style.display       = 'none';
+    document.getElementById('gd-slot-label').textContent        = '';
+    document.getElementById('gd-question').textContent          = q.q;
+    gdState.answered = false;
+    gdState.phase    = 'question';
+    gdAimX = TRI_APEX_X;
+    gdDrawBoard(null, -1, false);
+
+    const optsEl = document.getElementById('gd-options');
+    optsEl.innerHTML = '';
+    q.opts.forEach((o, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-outline';
+      btn.style.cssText = 'font-size:0.95rem;padding:0.6rem 0.8rem;width:100%;text-align:left;font-family:Nunito,sans-serif;font-weight:700;';
+      btn.textContent = ['A','B','C','D'][i] + ') ' + o;
+      btn.onclick = () => gdAnswer(i);
+      optsEl.appendChild(btn);
+    });
+  }
+
+  function gdAnswer(i) {
+    if (gdState.answered) return;
+    gdState.answered = true;
+    const q  = GD_QUESTIONS[gdState.round];
+    const ok = (i === q.ans);
+    const fb = document.getElementById('gd-feedback');
+
+    document.querySelectorAll('#gd-options button').forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === q.ans)         { btn.style.borderColor='#55cc55'; btn.style.color='#55cc55'; }
+      else if (idx===i && !ok)   { btn.style.borderColor='#cc3333'; btn.style.color='#cc3333'; }
+    });
+
+    fb.style.display = '';
+    if (ok) {
+      fb.style.color   = '#55cc55';
+      fb.textContent   = '✅ Correcte! Apunta amb el ratolí i fes clic!';
+      gdState.phase    = 'aiming';
+      gdAimX = TRI_APEX_X;
+      document.getElementById('gd-canvas').style.cursor = 'crosshair';
+      gdDrawBoard(null, -1, true);
+    } else {
+      fb.style.color = '#cc5555';
+      fb.textContent = '❌ Incorrecte! Ronda perduda…';
+      gdState.phase  = 'skipped';
+      setTimeout(() => {
+        document.getElementById('gd-slot-label').textContent = '0 punts — ronda perduda 😔';
+        if (gdState.round >= GD_QUESTIONS.length - 1) { setTimeout(gdShowFinal, 1400); }
+        else { document.getElementById('gd-next-area').style.display = ''; }
+      }, 900);
+    }
+  }
+
+  // ── Physics ───────────────────────────────────────────────────────────────
+  function gdDropBall(initVx) {
+    const ball   = { x: TRI_APEX_X, y: TRI_APEX_Y + 8, vx: initVx, vy: 1 };
+    const allPegs = [];
+    PEG_ROWS.forEach(row => row.xs.forEach(x => allPegs.push({ x, y: row.y })));
+
+    function step() {
+      ball.vy += 0.36;
+      ball.vx *= 0.997;
+      ball.x  += ball.vx;
+      ball.y  += ball.vy;
+
+      // Triangular walls (linear interpolation from apex to base)
+      const frac  = Math.min(1, (ball.y - TRI_APEX_Y) / (TRI_BASE_Y - TRI_APEX_Y));
+      const wallL = TRI_APEX_X + (TRI_BASE_L - TRI_APEX_X) * frac + BALL_R;
+      const wallR = TRI_APEX_X + (TRI_BASE_R - TRI_APEX_X) * frac - BALL_R;
+      if (ball.x < wallL) { ball.x = wallL; ball.vx =  Math.abs(ball.vx) * 0.55; }
+      if (ball.x > wallR) { ball.x = wallR; ball.vx = -Math.abs(ball.vx) * 0.55; }
+
+      // Peg collisions
+      for (const p of allPegs) {
+        const dx = ball.x - p.x, dy = ball.y - p.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < PEG_R + BALL_R + 1) {
+          const nx = dx/dist, ny = dy/dist;
+          ball.x = p.x + nx*(PEG_R+BALL_R+1.5);
+          ball.y = p.y + ny*(PEG_R+BALL_R+1.5);
+          const dot = ball.vx*nx + ball.vy*ny;
+          ball.vx = (ball.vx - 2*dot*nx)*0.5;
+          ball.vy = (ball.vy - 2*dot*ny)*0.5;
+          ball.vx += (Math.random()-0.5)*2.2;
+          if (ball.vy < 0.5) ball.vy = 0.5;
+        }
+      }
+
+      gdDrawBoard(ball, -1, false);
+
+      if (ball.y + BALL_R >= TRI_BASE_Y) {
+        const slot = Math.min(GD_SCORES.length-1, Math.max(0, Math.floor((ball.x - TRI_BASE_L) / SLOT_W)));
+        gdDrawBoard(ball, slot, false);
+        gdLanded(slot);
+        return;
+      }
+      gdState.animId = requestAnimationFrame(step);
+    }
+    gdState.animId = requestAnimationFrame(step);
+  }
+
+  function gdLanded(slot) {
+    const pts = GD_SCORES[slot];
+    gdState.score += pts;
+    document.getElementById('gd-score').textContent  = gdState.score;
+    document.getElementById('gd-slot-label').textContent = '+' + pts + ' punts! 🎉';
+    gdState.phase = 'result';
+    if (gdState.round >= GD_QUESTIONS.length - 1) { setTimeout(gdShowFinal, 1400); }
+    else { document.getElementById('gd-next-area').style.display = ''; }
+  }
+
+  function gdNextRound() { gdState.round++; gdShowQuestion(); }
+
+  function gdShowFinal() {
+    document.getElementById('gd-screen-question').style.display = 'none';
+    document.getElementById('gd-next-area').style.display       = 'none';
+    document.getElementById('gd-slot-label').textContent        = '';
+    document.getElementById('gd-screen-final').style.display    = '';
+    document.getElementById('gd-final-score').textContent       = gdState.score + ' pts';
+    let msg;
+    if (gdState.score >= 70)      msg = "Impressionant! Ets un Mestre del Coneixement! 🏆";
+    else if (gdState.score >= 40) msg = "Molt bé! Tens un bon nivell 👏";
+    else                          msg = "Continua practicant, ja milloraràs! 💪";
+    document.getElementById('gd-final-msg').textContent = msg;
+  }
+
+  // ── Canvas drawing ─────────────────────────────────────────────────────────
+  function gdDrawBoard(ball, highlightSlot, showAim) {
+    const canvas = document.getElementById('gd-canvas');
+    const ctx    = canvas.getContext('2d');
+    const W = canvas.width, H = canvas.height;
+    ctx.clearRect(0, 0, W, H);
+
+    // Dark background
+    ctx.fillStyle = '#0e0e0e';
+    ctx.fillRect(0, 0, W, H);
+
+    // Rectangle background/fill
+    ctx.fillStyle = '#1c1c1c';
+    ctx.fillRect(TRI_BASE_L, TRI_APEX_Y, TRI_BASE_R - TRI_BASE_L, TRI_BASE_Y - TRI_APEX_Y);
+    
+    // Rectangle border (red)
+    ctx.strokeStyle = '#D42B2B';
+    ctx.lineWidth   = 2.5;
+    ctx.strokeRect(TRI_BASE_L, TRI_APEX_Y, TRI_BASE_R - TRI_BASE_L, TRI_BASE_Y - TRI_APEX_Y);
+
+    // Slots at bottom - gaps where ball falls through
+    for (let i = 0; i < GD_SCORES.length; i++) {
+      const sx = TRI_BASE_L + i * SLOT_W;
+      // Draw slot background (colored)
+      ctx.fillStyle = i === highlightSlot ? '#FF6666' : GD_COLORS[i];
+      ctx.fillRect(sx+2, TRI_BASE_Y+2, SLOT_W-4, 25);
+      // Score text
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 14px Boogaloo, cursive';
+      ctx.textAlign = 'center';
+      ctx.fillText('+'+GD_SCORES[i], sx + SLOT_W/2, TRI_BASE_Y + 18);
+    }
+
+    // Pegs
+    PEG_ROWS.forEach(row => row.xs.forEach(px => {
+      ctx.beginPath(); ctx.arc(px, row.y, PEG_R, 0, Math.PI*2);
+      ctx.fillStyle = '#555'; ctx.fill();
+      ctx.strokeStyle = '#bbb'; ctx.lineWidth = 1.5; ctx.stroke();
+      // tiny shine
+      ctx.beginPath(); ctx.arc(px-2, row.y-2, 2, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)'; ctx.fill();
+    }));
+
+    // Aim indicator
+    if (showAim) {
+      const clampedAim = Math.max(200, Math.min(500, gdAimX));
+      const dx  = clampedAim - TRI_APEX_X;
+      const endX = TRI_APEX_X + dx * 0.55;
+      const endY = TRI_APEX_Y + 65;
+      // dashed guide line
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = 'rgba(255,100,100,0.75)';
+      ctx.lineWidth   = 2;
+      ctx.beginPath(); ctx.moveTo(TRI_APEX_X, TRI_APEX_Y); ctx.lineTo(endX, endY); ctx.stroke();
+      ctx.setLineDash([]);
+      // arrowhead dot
+      ctx.beginPath(); ctx.arc(endX, endY, 5, 0, Math.PI*2);
+      ctx.fillStyle = '#FF4444'; ctx.fill();
+      // apex launch dot
+      ctx.beginPath(); ctx.arc(TRI_APEX_X, TRI_APEX_Y, 9, 0, Math.PI*2);
+      ctx.fillStyle = '#D42B2B'; ctx.fill();
+      ctx.fillStyle = 'white'; ctx.font = 'bold 10px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('↓', TRI_APEX_X, TRI_APEX_Y + 4);
+      // hint text
+      ctx.fillStyle = 'rgba(180,180,180,0.75)';
+      ctx.font = '10px Nunito, sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('Mou el ratolí · fes clic per llançar', W/2, H - 6);
+    }
+
+    // Ball
+    if (ball) {
+      const grad = ctx.createRadialGradient(ball.x-3, ball.y-3, 2, ball.x, ball.y, BALL_R);
+      grad.addColorStop(0, '#FF9999');
+      grad.addColorStop(1, '#CC2222');
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2);
+      ctx.fillStyle = grad; ctx.fill();
+      ctx.strokeStyle = '#FF4444'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.shadowColor = '#D42B2B'; ctx.shadowBlur = 16;
+      ctx.beginPath(); ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI*2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
+  function scrollTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
