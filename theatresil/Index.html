@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  
+  <title>Llibre que mostres | Cinema Glass</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --accent-cyan: #00c2ff;
+      --accent-yellow: #ffb703;
+      --accent-red: #ff5a5a;
+      --text-main: #f8fafc;
+      --text-muted: #cbd5e1;
+      --slick-ease: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Poppins", sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: calc(80px + env(safe-area-inset-top)) 15px calc(120px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+      overscroll-behavior-y: none; 
+    }
+
+    .glass {
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      transition: all 0.4s var(--slick-ease);
+    }
+
+    .card { border-radius: 30px; padding: 40px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4); }
+    .card:hover { border-color: rgba(255,255,255,0.25); }
+
+    .lang-nav {
+      position: fixed; top: 20px; right: 20px; z-index: 10001;
+      display: flex; gap: 10px; background: rgba(15, 23, 42, 0.8);
+      padding: 8px; border-radius: 15px; backdrop-filter: blur(15px);
+      border: 1px solid var(--glass-border); align-items: center;
+    }
+
+    .lang-btn-toggle {
+      background: transparent; border: none; color: var(--text-muted);
+      padding: 6px 14px; border-radius: 10px; cursor: pointer;
+      font-weight: 600; font-size: 0.8rem; transition: 0.3s;
+    }
+    .lang-btn-toggle.active { background: var(--accent-cyan); color: #0f172a; }
+
+    .install-btn {
+      background: rgba(0, 194, 255, 0.2); border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan); font-size: 0.75rem; padding: 6px 12px;
+      border-radius: 10px; cursor: pointer; font-weight: 700; display: none;
+    }
+
+    #iosPrompt {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+      width: 90%; max-width: 400px; padding: 20px; border-radius: 20px;
+      z-index: 10002; display: none; text-align: center;
+      animation: slideUp 0.6s var(--slick-ease);
+    }
+
+    @keyframes slideUp { from { transform: translate(-50%, 100%); } to { transform: translate(-50%, 0); } }
+
+    .page { display: none; width: 100%; max-width: 1000px; animation: slideIn 0.5s var(--slick-ease) forwards; }
+    .page.active { display: block; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .movie-layout { display: flex; gap: 40px; flex-wrap: wrap; }
+    .left-panel { width: 320px; }
+
+    .poster-frame { padding: 12px; border-radius: 22px; margin-bottom: 20px; width: 100%; }
+    .poster-frame img { width: 100%; border-radius: 15px; display: block; }
+
+    .title {
+      font-size: 2.8rem; font-weight: 700;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      line-height: 1.1; margin-bottom: 10px; cursor: pointer;
+      user-select: none; -webkit-user-select: none;
+    }
+
+    .ticket-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 20px; border-radius: 18px; margin-bottom: 12px; transition: 0.3s;
+    }
+    .ticket-row:hover { background: rgba(255,255,255,0.12); }
+
+    .counter { display: flex; align-items: center; gap: 15px; }
+    .counter button {
+      width: 36px; height: 36px; border-radius: 12px;
+      border: 1px solid var(--accent-yellow); background: rgba(255, 183, 3, 0.1);
+      color: var(--accent-yellow); cursor: pointer; font-weight: bold; transition: 0.3s;
+    }
+    .counter button:hover:not(:disabled) { 
+        background: var(--accent-yellow); color: #000; transform: scale(1.1); 
+        box-shadow: 0 0 15px var(--accent-yellow);
+    }
+    .counter button:active { transform: scale(0.9); }
+
+    .seat-map-wrapper { overflow-x: auto; padding: 20px 0; -webkit-overflow-scrolling: touch; }
+    .seat-map { display: grid; grid-template-columns: repeat(16, 40px); gap: 10px; width: max-content; margin: 0 auto; }
+
+    .seat {
+      width: 40px; height: 40px; border-radius: 10px 10px 18px 18px;
+      font-size: 0.7rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.1);
+      transition: 0.4s var(--slick-ease); display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .seat:hover:not(.occupied) { transform: translateY(-8px) scale(1.2); z-index: 5; }
+
+    .seat.normal-seat { background: rgba(255, 255, 255, 0.2); color: #fff; } 
+    .seat.vip-seat { background: rgba(0, 194, 255, 0.15); color: var(--accent-cyan); border-color: var(--accent-cyan); }
+    .seat.selected { background: var(--accent-yellow) !important; color: #000 !important; box-shadow: 0 0 20px var(--accent-yellow); border: none; }
+    .seat.occupied { background: #334155 !important; opacity: 0.3; cursor: not-allowed; border: none; }
+
+    .screen {
+      grid-column: 2 / 16; width: 100%; height: 40px; margin-top: 50px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.7), transparent);
+      border-radius: 50% / 100% 100% 0 0; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; letter-spacing: 10px; font-size: 0.8rem;
+    }
+
+    .btn {
+      background: var(--accent-cyan); color: #0f172a; border: none;
+      padding: 14px 35px; border-radius: 16px; font-weight: 700;
+      text-transform: uppercase; cursor: pointer; transition: 0.4s var(--slick-ease);
+    }
+    .btn:hover:not(:disabled) { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0, 194, 255, 0.4); }
+    .btn:active { transform: scale(0.95); }
+
+    .btn-secondary { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+
+    #bookingStrip {
+      position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+      width: 85%; max-width: 600px; background: rgba(200, 200, 200, 0.1);
+      backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 25px; padding: 20px; text-align: center; display: none; z-index: 9999;
+      cursor: pointer;
+    }
+
+    .ticket { border-radius: 28px; max-width: 400px; margin: 30px auto; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+    .ticket-header { padding: 20px; text-align: center; font-weight: 800; border-bottom: 2px dashed rgba(255,255,255,0.1); }
+    .ticket-body { padding: 30px; line-height: 2.2; text-align: left; }
+  </style>
+</head>
+<body>
+
+<nav class="lang-nav">
+  <button class="lang-btn-toggle active" onclick="changeLanguage('ca')">CAT</button> 
+  <button class="lang-btn-toggle" onclick="changeLanguage('es')">ESP</button> 
+  <button class="lang-btn-toggle" onclick="changeLanguage('en')">ENG</button>
+  <button id="installBtn" class="install-btn" data-i18n="install">APP</button>
+</nav>
+
+<div id="iosPrompt" class="glass">
+    <p style="margin-bottom:15px;" data-i18n="iosInstruct">Prem compartir i després "Afegir a la pantalla d'inici"</p>
+    <button class="btn" style="padding: 8px 20px; font-size: 0.8rem;" onclick="document.getElementById('iosPrompt').style.display='none'">OK</button>
+</div>
+
+<div class="page active" id="page1">
+  <div class="card glass">
+    <div class="movie-layout">
+      <div class="left-panel">
+        <div class="poster-frame glass"><img src="poster.png" alt="Poster"></div>
+        <div class="ticket-options">
+          <div class="ticket-row glass">
+            <div>VIP Adults<br><strong>25 €</strong></div>
+            <div class="counter"><button class="cnt-btn" onclick="changeCount('vipAdults', -1)">-</button><span id="vipAdults">0</span><button class="cnt-btn" onclick="changeCount('vipAdults', 1)">+</button></div>
+          </div>
+          <div class="ticket-row glass">
+            <div>VIP Nens<br><strong>18 €</strong></div>
+            <div class="counter"><button class="cnt-btn" onclick="changeCount('vipKids', -1)">-</button><span id="vipKids">0</span><button class="cnt-btn" onclick="changeCount('vipKids', 1)">+</button></div>
+          </div>
+          <div class="ticket-row glass">
+            <div>Basic Adults<br><strong>20 €</strong></div>
+            <div class="counter"><button class="cnt-btn" onclick="changeCount('normalAdults', -1)">-</button><span id="normalAdults">0</span><button class="cnt-btn" onclick="changeCount('normalAdults', 1)">+</button></div>
+          </div>
+          <div class="ticket-row glass">
+            <div>Basic Nens<br><strong>12 €</strong></div>
+            <div class="counter"><button class="cnt-btn" onclick="changeCount('normalKids', -1)">-</button><span id="normalKids">0</span><button class="cnt-btn" onclick="changeCount('normalKids', 1)">+</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="right-panel">
+        <h1 class="title" id="adminTrigger" data-i18n="movieName">El drama del WhatsApp</h1>
+        <div style="width: 50px; height: 4px; background: var(--accent-cyan); border-radius: 10px; margin-bottom: 25px;"></div>
+        <div style="color: var(--accent-cyan); font-weight: 700; font-size: 0.8rem; margin-bottom: 10px;" data-i18n="casting">CÀSTING</div>
+        <p style="opacity: 0.8; line-height: 1.8; margin-bottom: 40px;">Arnau Ferrer • Carlota Gimeno • Hugo Marimon <br>Sashtik Gokulkumar • Mrudil Chowdary <br>Iaroslav Nuraev • Mathew Volchek</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1);">
+          <div>Total: <span id="totalPrice" style="color: var(--accent-cyan); font-weight: 700; font-size: 2rem;">0</span> €</div>
+          <button class="btn" id="nextBtn" data-i18n="chooseSeats">Tria seients</button>
+        </div>
+        <div id="lockedMsg" style="display:none; margin-top: 20px; color: var(--accent-yellow); text-align:center;" data-i18n="lockedMsg">🔒 Reserva ja realitzada.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page2">
+  <div class="card glass">
+    <div style="text-align:center; margin-bottom: 20px;">
+      <h1 data-i18n="selectSeats">Seleccioneu els seients</h1>
+      <p style="opacity: 0.6;"><span data-i18n="mustChoose">Tria</span> <strong id="requiredSeats">0</strong> <span data-i18n="seatsCount">seient(s)</span></p>
+    </div>
+    <div class="seat-map-wrapper"><div class="seat-map" id="seatMap"></div></div>
+    <div style="display:flex; justify-content: space-between; margin-top: 40px;">
+      <button class="btn btn-secondary glass" onclick="showPage('page1')" data-i18n="back">Enrere</button>
+      <button class="btn" id="payBtn"><span data-i18n="pay">Pagar</span> <span id="payBtnTotal"></span></button>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page3">
+  <div class="card glass" style="text-align: center;">
+    <h1 style="color: #4ade80;" data-i18n="confirmed">🎉 Reserva Confirmada!</h1>
+    <div class="ticket glass">
+      <div class="ticket-header" id="ticketBadge"></div>
+      <div class="ticket-body">
+        <div><strong data-i18n="tTitle">Títol:</strong> <span id="ticketTitle"></span></div>
+        <div><strong data-i18n="tSeats">Seients:</strong> <span id="ticketSeats"></span></div>
+        <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; font-size: 1.5rem; color: var(--accent-cyan);">
+          <strong data-i18n="tTotal">Total:</strong> <span id="ticketTotal"></span> €
+        </div>
+      </div>
+    </div>
+    <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
+      <button class="btn glass" style="background: var(--accent-cyan); color: #0f172a;" onclick="showPage('page1')" data-i18n="home">Inici</button>
+      <button class="btn glass" style="background:transparent; color: var(--accent-red); border: 1px solid rgba(255, 90, 90, 0.4);" onclick="cancelBooking()" data-i18n="cancelRes">Cancel·lar</button>
+    </div>
+  </div>
+</div>
+
+<div id="bookingStrip" onclick="showPage('page3')" data-i18n="stripMsg">🎟️ Veure Reserva</div>
+
+<script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBcjZZMinS1H1y2TLCdCABK584fN-TN1GU",
+      authDomain: "cinemadrama-999.firebaseapp.com",
+      databaseURL: "https://cinemadrama-999-default-rtdb.europe-west1.firebasedatabase.app/",
+      projectId: "cinemadrama-999",
+      storageBucket: "cinemadrama-999.firebasestorage.app",
+      messagingSenderId: "317602991663",
+      appId: "1:317602991663:web:fd86ca2b021b1d1ed880da"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    const translations = {
+      ca: { movieName: "El drama del WhatsApp", chooseSeats: "Tria seients", lockedMsg: "🔒 Reserva realitzada.", selectSeats: "Seleccioneu els seients", mustChoose: "Cal triar", seatsCount: "Seient(s)", stage: "ESCENARI", back: "Enrere", pay: "Pagar", confirmed: "🎉 Reserva Confirmada!", cancelRes: "Cancel·lar Reserva", stripMsg: "🎟️ Veure Reserva", tTitle: "Títol:", tSeats: "Seients:", tTotal: "Total:", vipEntry: "Entrada VIP", basicEntry: "Entrada Bàsica", casting: "CÀSTING", alertVipCount: "Massa seients VIP", alertBasicCount: "Massa seients Basic", alertCompleteSelection: "Falten seients per triar", confirmCancel: "Segur que vols cancel·lar?", home: "Inici", install: "APP", iosInstruct: "Prem compartir i després 'Afegir a la pantalla d'inici'" },
+      es: { movieName: "El drama del WhatsApp", chooseSeats: "Elegir asientos", lockedMsg: "🔒 Reserva realizada.", selectSeats: "Selecciona tus asientos", mustChoose: "Debes elegir", seatsCount: "Asiento(s)", stage: "ESCENARIO", back: "Atrás", pay: "Pagar", confirmed: "🎉 ¡Reserva Confirmada!", cancelRes: "Cancelar Reserva", stripMsg: "🎟️ Ver Reserva", tTitle: "Título:", tSeats: "Asientos:", tTotal: "Total:", vipEntry: "Entrada VIP", basicEntry: "Entrada Básica", casting: "REPARTO", alertVipCount: "Demasiados VIP", alertBasicCount: "Demasiados Básicos", alertCompleteSelection: "Faltan asientos", confirmCancel: "¿Seguro?", home: "Inicio", install: "APP", iosInstruct: "Pulsa compartir y luego 'Añadir a pantalla de inicio'" },
+      en: { movieName: "The WhatsApp Drama", chooseSeats: "Choose Seats", lockedMsg: "🔒 Booking confirmed.", selectSeats: "Select your seats", mustChoose: "You must choose", seatsCount: "Seat(s)", stage: "STAGE", back: "Back", pay: "Pay", confirmed: "🎉 Booking Confirmed!", cancelRes: "Cancel Booking", stripMsg: "🎟️ View Booking", tTitle: "Title:", tSeats: "Seats:", tTotal: "Total:", vipEntry: "VIP Ticket", basicEntry: "Basic Ticket", casting: "CAST", alertVipCount: "Check VIP count", alertBasicCount: "Check Basic count", alertCompleteSelection: "Finish selection", confirmCancel: "Are you sure?", home: "Home", install: "APP", iosInstruct: "Tap share icon and then 'Add to Home Screen'" }
+    };
+
+    let currentLang = 'ca';
+    let counts = { vipAdults: 0, vipKids: 0, normalAdults: 0, normalKids: 0 };
+    const prices = { vipAdults: 25, vipKids: 18, normalAdults: 20, normalKids: 12 };
+    let selectedSeats = [];
+    let occupiedSeats = [];
+
+    // INSTALL LOGIC
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; installBtn.style.display = 'block'; });
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    if (isIOS && !isStandalone) installBtn.style.display = 'block';
+
+    installBtn.addEventListener('click', () => {
+      if (isIOS) document.getElementById('iosPrompt').style.display = 'block';
+      else if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then((c) => { if(c.outcome==='accepted') installBtn.style.display='none'; deferredPrompt=null; });
+      }
+    });
+
+    database.ref('occupiedSeats').on('value', (snap) => {
+        occupiedSeats = snap.val() || [];
+        const savedData = JSON.parse(localStorage.getItem("movieBookingData"));
+        if (savedData && savedData.seats) {
+            const seatsStillExist = savedData.seats.some(seat => occupiedSeats.includes(seat));
+            if (!seatsStillExist && occupiedSeats.length === 0) {
+                localStorage.removeItem("movieBookingData");
+                location.reload(); 
+            }
+        }
+        if (document.getElementById('page2').classList.contains('active')) createSeatMap();
+    });
+
+    const seatLayout = {
+      A: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16],
+      B: [1,2,3,4,5,6,7,8,9,null,null,12,13,14,15,16],
+      C: [1,2,3,4,5,6,7,8,9,null,null,null,13,14,15,16],
+      D: [1,2,3,4,5,6,7,8,9,null,null,null,null,14,15,16],
+      E: [1,2,3,4,5,6,7,8,9,null,null,12,13,14,15,16],
+      F: [1,2,3,4,5,6,7,8,9,null,null,12,13,14,15,16],
+      G: [1,2,3,4,5,6,7,8,9,null,null,12,13,14,15,16]
+    };
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.lang-btn-toggle').forEach(b => b.classList.toggle('active', b.innerText.toLowerCase().includes(lang)));
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.innerText = translations[lang][el.getAttribute('data-i18n')]; });
+      updateTotal();
+    }
+
+    function changeCount(type, val) {
+      if (localStorage.getItem("movieBookingData")) return; 
+      counts[type] = Math.max(0, counts[type] + val);
+      document.getElementById(type).textContent = counts[type];
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const total = counts.vipAdults * prices.vipAdults + counts.vipKids * prices.vipKids + counts.normalAdults * prices.normalAdults + counts.normalKids * prices.normalKids;
+      document.getElementById("totalPrice").textContent = total;
+      document.getElementById("payBtnTotal").textContent = total + " €";
+    }
+
+    function isVipSeat(code) {
+      const row = code.charAt(0);
+      const num = parseInt(code.slice(1));
+      return ((["C", "D"].includes(row) && num >= 4 && num <= 9) || (["E", "F", "G"].includes(row) && num >= 4 && num <= 13));
+    }
+
+    function createSeatMap() {
+      const map = document.getElementById("seatMap");
+      map.innerHTML = "";
+      Object.keys(seatLayout).forEach(row => {
+        seatLayout[row].forEach(num => {
+          if (num === null) { map.appendChild(document.createElement("div")); return; }
+          const code = `${row}${num}`;
+          const btn = document.createElement("button");
+          btn.className = `seat ${isVipSeat(code) ? 'vip-seat' : 'normal-seat'}`;
+          btn.textContent = code;
+          if (occupiedSeats.includes(code)) { btn.classList.add("occupied"); btn.disabled = true; }
+          if (selectedSeats.includes(code)) btn.classList.add("selected");
+          btn.onclick = () => {
+            if (btn.classList.contains("selected")) {
+              selectedSeats = selectedSeats.filter(s => s !== code);
+              btn.classList.remove("selected");
+            } else {
+              const vipNeeded = counts.vipAdults + counts.vipKids;
+              const vipSelected = selectedSeats.filter(isVipSeat).length;
+              const normalNeeded = counts.normalAdults + counts.normalKids;
+              const normalSelected = selectedSeats.length - vipSelected;
+              if (isVipSeat(code)) { if (vipSelected >= vipNeeded) { alert(translations[currentLang].alertVipCount); return; } }
+              else { if (normalSelected >= normalNeeded) { alert(translations[currentLang].alertBasicCount); return; } }
+              selectedSeats.push(code); btn.classList.add("selected");
+            }
+          };
+          map.appendChild(btn);
+        });
+      });
+      const screen = document.createElement("div");
+      screen.className = "screen"; screen.innerText = translations[currentLang].stage;
+      map.appendChild(screen);
+    }
+
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    document.getElementById("nextBtn").onclick = () => {
+      const total = Object.values(counts).reduce((a,b)=>a+b,0);
+      if (total === 0) return;
+      document.getElementById("requiredSeats").textContent = total;
+      selectedSeats = [];
+      createSeatMap();
+      showPage("page2");
+    };
+
+    document.getElementById("payBtn").onclick = () => {
+      const total = Object.values(counts).reduce((a,b)=>a+b,0);
+      if (selectedSeats.length !== total) { alert(translations[currentLang].alertCompleteSelection); return; }
+      const updatedOccupiedSeats = [...new Set([...occupiedSeats, ...selectedSeats])];
+      database.ref('occupiedSeats').set(updatedOccupiedSeats);
+      const data = { title: translations[currentLang].movieName, seats: selectedSeats, total: document.getElementById("totalPrice").textContent };
+      localStorage.setItem("movieBookingData", JSON.stringify(data));
+      fillTicket(data);
+      showPage("page3");
+    };
+
+    function fillTicket(data) {
+      document.getElementById("ticketTitle").textContent = data.title;
+      document.getElementById("ticketSeats").textContent = data.seats.join(", ");
+      document.getElementById("ticketTotal").textContent = data.total;
+      const badge = document.getElementById("ticketBadge");
+      const isVip = data.seats.some(isVipSeat);
+      badge.innerText = isVip ? translations[currentLang].vipEntry : translations[currentLang].basicEntry;
+      badge.style.color = isVip ? "var(--accent-cyan)" : "var(--accent-yellow)";
+      document.getElementById("lockedMsg").style.display = "block";
+      document.getElementById("nextBtn").disabled = true;
+      document.querySelectorAll(".cnt-btn").forEach(b => b.disabled = true);
+      document.getElementById("bookingStrip").style.display = "block";
+    }
+
+    function cancelBooking() {
+      if (confirm(translations[currentLang].confirmCancel)) {
+        const savedData = JSON.parse(localStorage.getItem("movieBookingData"));
+        if (savedData && savedData.seats) {
+            const updatedOccupiedSeats = occupiedSeats.filter(seat => !savedData.seats.includes(seat));
+            database.ref('occupiedSeats').set(updatedOccupiedSeats);
+        }
+        localStorage.removeItem("movieBookingData");
+        location.reload();
+      }
+    }
+
+    // ADMIN 250911
+    let buffer = "";
+    window.addEventListener('keydown', (e) => {
+        if (!isNaN(e.key)) { buffer += e.key; if (buffer.length > 6) buffer = buffer.slice(-6); if (buffer === "250911") masterReset(); }
+    });
+
+    const adminZone = document.getElementById('adminTrigger');
+    adminZone.addEventListener('touchstart', () => {
+        touchTimer = setTimeout(() => { if (prompt("Code:") === "250911") masterReset(); }, 3000);
+    });
+    adminZone.addEventListener('touchend', () => clearTimeout(touchTimer));
+
+    function masterReset() {
+        if (confirm("Clear all?")) {
+            database.ref('occupiedSeats').set([]);
+            localStorage.removeItem("movieBookingData");
+            location.reload();
+        }
+    }
+
+    const saved = JSON.parse(localStorage.getItem("movieBookingData"));
+    if (saved) fillTicket(saved);
+
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+</script>
+</body>
+</html>
