@@ -1,0 +1,2104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduWise - Full App</title>
+    <style>
+	#bot-toggle-btn,
+#chatbot-panel {
+    display: none;
+}
+
+	
+        :root {
+            --primary-color: #2d89ef;
+            --primary-hover: #1b5eaa;
+            --success-color: #28a745;
+            --danger-color: #dc3545;
+            --warning-color: #ffc107;
+            --bg-color: #f0f4f8;
+            --card-bg: #fff;
+            --card-hover-bg: #eaf4fe;
+            --menu-bg-color: #f9fbfe;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        #login-screen, #register-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #e3f2fd 100%);
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+.team-credit {
+    margin-top: 18px;
+    font-size: 13px;
+    color: #888;
+    opacity: 0.7;
+}
+
+
+        .login-container h1 {
+            color: var(--primary-color);
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+
+        .login-form input, .login-form select {
+            width: 100%;
+            padding: 15px;
+            margin: 12px 0;
+            border: 2px solid #e1e5e9;
+            border-radius: 12px;
+            font-size: 16px;
+            background: #fafbfc;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .login-form input:focus, .login-form select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(45,137,239,0.1);
+        }
+
+        .login-form button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border: none;
+            color: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(45,137,239,0.3);
+        }
+
+        .login-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45,137,239,0.4);
+        }
+
+        .login-form button:active {
+            transform: translateY(0);
+        }
+
+        .login-form p {
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+        .login-form a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .login-form a:hover {
+            color: var(--primary-hover);
+        }
+
+        #dashboard-screen {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            position: relative;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(45,137,239,0.3);
+        }
+
+        header h2 {
+            margin: 0;
+            font-size: 2em;
+            font-weight: 300;
+        }
+
+        #theme-toggle {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            font-size: 20px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        #theme-toggle:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .tab-nav {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tab-nav button {
+            flex: 1;
+            min-width: 140px;
+            padding: 15px 20px;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            white-space: nowrap;
+        }
+
+        .tab-nav button.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(45,137,239,0.3);
+        }
+
+        .tab-nav button:hover:not(.active) {
+            background: var(--card-hover-bg);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .study-cards {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            padding: 20px;
+            background: var(--menu-bg-color);
+            border-radius: 16px;
+            margin: 20px auto;
+            max-width: 1000px;
+            flex-wrap: wrap;
+        }
+
+        .study-cards .card {
+            flex: 1 1 160px;
+            max-width: 180px;
+            padding: 25px 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .study-cards .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        .study-cards .card:hover {
+            background: var(--card-hover-bg);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+            transform: translateY(-8px);
+        }
+
+        .study-cards .card:nth-child(1) {
+            border-top: 4px solid var(--success-color);
+        }
+
+        .study-cards .card:nth-child(2) {
+            border-top: 4px solid var(--warning-color);
+        }
+
+        .study-cards .card:nth-child(3) {
+            border-top: 4px solid var(--primary-color);
+        }
+
+        .study-cards .card:nth-child(4) {
+            border-top: 4px solid var(--danger-color);
+        }
+
+        .study-cards .card:nth-child(5) {
+            border-top: 4px solid #6f42c1;
+        }
+
+        .tab-content {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .tab-pane {
+            display: none;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .study-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .study-section p {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        #subject-select {
+            font-size: 18px;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid #e1e5e9;
+            width: 300px;
+            max-width: 100%;
+            background: #fafbfc;
+            transition: all 0.3s ease;
+        }
+
+        #subject-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(45,137,239,0.1);
+        }
+
+        #chapter-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        #chapter-section p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        #chapter-select {
+            font-size: 18px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 2px solid #e1e5e9;
+            width: 280px;
+            max-width: 100%;
+            background: #fafbfc;
+        }
+
+        #chapter-content {
+            margin-top: 30px;
+            text-align: left;
+            background: rgba(255,255,255,0.7);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            font-size: 18px;
+            line-height: 1.7;
+            backdrop-filter: blur(10px);
+            min-height: 300px;
+        }
+
+        #back-button {
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(45,137,239,0.3);
+        }
+
+        #back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45,137,239,0.4);
+        }
+
+        #flashcard-container {
+            max-width: 450px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        #flashcard {
+            background: linear-gradient(145deg, #ffffff, #f0f8ff);
+            border-radius: 20px;
+            padding: 40px 30px;
+            font-size: 26px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #flashcard.flipped {
+            background: linear-gradient(145deg, #e8f4fd, #d0e8ff);
+        }
+
+        #flashcard::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-hover));
+        }
+
+        #flashcard-buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        #flashcard-buttons button {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 12px;
+            border: none;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        #flip-flashcard, #prev-flashcard, #next-flashcard {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            box-shadow: 0 4px 15px rgba(45,137,239,0.3);
+            border: none !important;
+        }
+
+        #flashcard-buttons button:hover {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .calc-section {
+            background: rgba(255,255,255,0.6);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .calc-section h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+            font-size: 1.4em;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #fafbfc;
+            box-sizing: border-box;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--success-color), #218838);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, var(--success-color), #218838);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-top: 20px;
+            box-shadow: 0 6px 20px rgba(40,167,69,0.3);
+        }
+
+        .test-entry {
+            background: rgba(255,255,255,0.6);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .test-entry input, .test-entry select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            background: #fafbfc;
+            box-sizing: border-box;
+        }
+
+        .test-list {
+            margin-top: 25px;
+        }
+
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .avg-score {
+            background: linear-gradient(135deg, var(--warning-color), #e0a800);
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-top: 25px;
+        }
+
+        .calendar-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .calendar-nav button {
+            padding: 12px 24px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        #calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background: rgba(255,255,255,0.4);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .calendar-day {
+            padding: 18px 12px;
+            text-align: center;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .calendar-day.header {
+            font-weight: 700;
+            font-size: 16px;
+            background: linear-gradient(135deg, rgba(45,137,239,0.3), rgba(45,137,239,0.1));
+            cursor: default;
+            color: var(--primary-color);
+            min-height: auto;
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(45,137,239,0.4);
+        }
+
+        .calendar-day:hover:not(.header) {
+            background: linear-gradient(135deg, rgba(45,137,239,0.15), rgba(45,137,239,0.05));
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(45,137,239,0.2);
+        }
+
+        .calendar-day.has-events {
+            border: 3px solid var(--success-color);
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+
+        .event {
+            background: rgba(255,255,255,0.9);
+            color: var(--text-color);
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            margin-top: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        #add-event-form, #day-events-panel {
+            margin-top: 25px;
+            padding: 25px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        #add-event-form.active, #day-events-panel.active {
+            display: block;
+            animation: slideDown 0.4s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .event-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .event-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(40,167,69,0.1);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        .delete-event {
+            background: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-add-session {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--success-color), #218838);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40,167,69,0.3);
+        }
+
+        .btn-add-session:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .tab-nav {
+                flex-direction: column;
+            }
+
+            .tab-nav button {
+                min-width: auto;
+            }
+
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #flashcard-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .calendar-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .study-cards {
+                flex-direction: column;
+            }
+
+            .study-cards .card {
+                max-width: none;
+                width: 100%;
+            }
+        }
+
+        body.dark {
+            --bg-color: #0a0a0a;
+            --card-bg: #1a1a1a;
+            --card-hover-bg: #2a2a2a;
+            --menu-bg-color: #222;
+            --text-color: #e0e0e0;
+        }
+
+        body.dark .tab-pane,
+        body.dark #chapter-content,
+        body.dark .login-container {
+            background: var(--card-bg);
+        }
+
+        body.dark .input-group input,
+        body.dark #subject-select,
+        body.dark #chapter-select {
+            background: #2a2a2a;
+            border-color: #444;
+            color: var(--text-color);
+        }
+
+        body.dark #flashcard {
+            background: linear-gradient(145deg, #2a2a2a, #333);
+            color: var(--text-color);
+        }
+
+        body.dark #flashcard.flipped {
+            background: linear-gradient(145deg, #333, #3a3a3a);
+            color: var(--text-color);
+        }
+
+        body.dark #calendar-grid {
+            background: #1a1a1a;
+        }
+
+        body.dark .calendar-day {
+            background: #2a2a2a;
+            color: #e0e0e0;
+        }
+
+        body.dark .calendar-day.today {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+        }
+
+        body.dark .calendar-day.header {
+            background: rgba(45,137,239,0.3);
+            color: var(--primary-color);
+        }
+
+        body.dark .calendar-day:hover:not(.header) {
+            background: #333;
+            transform: scale(1.05);
+        }
+
+        body.dark .event {
+            background: #111;
+            color: #f0f0f0;
+            box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+        }
+
+        body.dark #add-event-form,
+        body.dark #day-events-panel {
+            background: var(--card-bg);
+        }
+
+        body.dark .event-item {
+            background: rgba(40,167,69,0.2);
+            border-left: 4px solid var(--success-color);
+            color: var(--text-color);
+        }
+
+        body.dark .test-item {
+            background: #2a2a2a;
+        }
+
+        #bot-toggle-btn {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            border: none;
+            color: white;
+            padding: 18px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(45,137,239,0.4);
+            z-index: 10000;
+            transition: all 0.3s ease;
+        }
+
+        #bot-toggle-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(45,137,239,0.5);
+        }
+
+        #chatbot-panel {
+            display: none;
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 360px;
+            max-width: 90vw;
+            height: 450px;
+            background: var(--card-bg);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border-radius: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+            z-index: 9999;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        body.dark #chatbot-panel {
+            background: #1a1a1a;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+        }
+
+        #chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            font-size: 15px;
+            padding: 10px;
+            height: 350px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+            clear: both;
+            position: relative;
+            border-radius: 18px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-message {
+            float: right;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border-bottom-right-radius: 4px;
+            margin-left: auto;
+        }
+
+        .bot-message {
+            float: left;
+            background: var(--menu-bg-color);
+            color: var(--text-color);
+            border-bottom-left-radius: 4px;
+            border: 1px solid #e1e5e9;
+            margin-right: auto;
+        }
+
+        body.dark .bot-message {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            color: var(--text-color);
+        }
+
+        #chatbot-messages::after {
+            content: '';
+            display: table;
+            clear: both;
+        }
+
+        #chatbot-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        #chatbot-input {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #e1e5e9;
+            font-size: 15px;
+            background: #fafbfc;
+        }
+
+        body.dark #chatbot-input {
+            background: #2a2a2a;
+            border-color: #444;
+            color: var(--text-color);
+        }
+
+        #chatbot-form button {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            min-width: 70px;
+        }
+
+        /* REMINDER POPUP STYLES */
+        .reminder-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .reminder-popup.hidden {
+            display: none;
+        }
+
+        .reminder-box {
+            background: white;
+            width: 300px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: popupIn 0.2s ease;
+        }
+
+        @keyframes popupIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to   { transform: scale(1);   opacity: 1; }
+        }
+
+        #reminder-text {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        .popup-buttons {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .popup-buttons button {
+            flex: 1;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .popup-buttons button:not(.delete-btn):first-child {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .popup-buttons button:last-child {
+            background: #e0e0e0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-container">
+            <h1>EduWise</h1>
+            <form class="login-form" onsubmit="login(event)">
+                <input id="login-username" type="text" placeholder="Username" required autocomplete="username">
+                <input id="login-password" type="password" placeholder="Password" required autocomplete="current-password">
+                <button type="submit">Login</button>
+                <p>Don't have an account? <a onclick="showRegister()">Register</a></p>
+            </form>
+<p class="team-credit">
+    Made by our team — Mrudil · Ashwin · Navneet
+</p>
+
+        </div>
+    </div>
+
+    <!-- REGISTER SCREEN -->
+    <div id="register-screen" style="display: none;">
+        <div class="login-container">
+            <h1>Register</h1>
+            <form class="login-form" onsubmit="register(event)">
+                <input id="register-username" type="text" placeholder="Choose Username" required autocomplete="username">
+                <input id="register-password" type="password" placeholder="Choose Password" required autocomplete="new-password">
+                <select id="register-grade" required>
+                    <option value="" disabled selected>Select Grade</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                </select>
+                <button type="submit">REGISTER</button>
+                <p>Already have an account? <a onclick="showLogin()">Login</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div id="dashboard-screen">
+        <header>
+            <h2 id="welcome-msg">Welcome to EduWise</h2>
+            <button id="theme-toggle" title="Toggle Theme">🌗</button>
+        </header>
+
+        <nav class="tab-nav" id="main-tab-nav">
+            <button class="tab-btn active" data-tab="study">🎓 Study</button>
+            <button class="tab-btn" data-tab="calculator">🧮 Calculator</button>
+            <button class="tab-btn" data-tab="test-scores">📊 Test Scores</button>
+            <button class="tab-btn" data-tab="calendar">📅 Calendar</button>
+        </nav>
+
+        <div class="tab-content">
+            <!-- Study Tab -->
+            <div id="study" class="tab-pane active">
+                <div id="study-section">
+                    <p>What would you like to study today?</p>
+                    <select id="subject-select" aria-label="Select subject">
+                        <option value="" disabled selected>Select Subject</option>
+                    </select>
+                </div>
+
+                <div id="study-cards" class="study-cards">
+                    <div class="card" data-card="notes">📝 Notes</div>
+                    <div class="card" data-card="flashcards">🎴 Flashcards</div>
+                    <div class="card" data-card="syllabus">📚 Syllabus</div>
+                    <div class="card" data-card="exam-tips">💡 Exam Tips</div>
+                    <div class="card" data-card="testpapers">📄 Test Worksheets</div>
+                </div>
+
+                <div id="chapter-section">
+                    <select id="chapter-select">
+                        <option value="" disabled selected>Select Chapter</option>
+                        <option value="1">Chapter 1</option>
+                        <option value="2">Chapter 2</option>
+                        <option value="3">Chapter 3</option>
+                        <option value="4">Chapter 4</option>
+                        <option value="5">Chapter 5</option>
+                    </select>
+                    <div id="chapter-content"></div>
+                    <button id="back-button" onclick="goBackToStudy()">Go Back</button>
+                </div>
+            </div>
+
+            <!-- Calculator Tab -->
+            <div id="calculator" class="tab-pane">
+                <div class="calculator-grid">
+                    <div class="calc-section">
+                        <h3>Percentage Calculator</h3>
+                        <div class="input-group">
+                            <label>Obtained Marks</label>
+                            <input type="number" id="marks-obtained" min="0" placeholder="Enter marks">
+                        </div>
+                        <div class="input-group">
+                            <label>Total Marks</label>
+                            <input type="number" id="total-marks" min="1" placeholder="Total marks">
+                        </div>
+                        <button class="btn-calculate" onclick="calculatePercentage()">Calculate</button>
+                        <div id="percentage-result"></div>
+                    </div>
+
+                    <div class="calc-section">
+                        <h3>GPA Calculator</h3>
+                        <div class="input-group">
+                            <label>Grade Points (0-10)</label>
+                            <input type="number" id="gpa-points" min="0" max="10" step="0.1" placeholder="e.g., 8.5">
+                        </div>
+                        <div class="input-group">
+                            <label>Credits</label>
+                            <input type="number" id="gpa-credits" min="1" value="4" placeholder="Credits">
+                        </div>
+                        <button class="btn-calculate" onclick="calculateGPA()">Calculate GPA</button>
+                        <div id="gpa-result"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Scores Tab -->
+            <div id="test-scores" class="tab-pane">
+                <div class="test-entry">
+                    <h3>Add New Test Score</h3>
+                    <div class="input-group">
+                        <label>Test Name</label>
+                        <input type="text" id="test-name" placeholder="e.g., Math Quiz 1">
+                    </div>
+                    <div class="input-group">
+                        <label>Score</label>
+                        <input type="number" id="test-score" min="0" max="100" placeholder="85">
+                    </div>
+                    <div class="input-group">
+                        <label>Date</label>
+                        <input type="date" id="test-date">
+                    </div>
+                    <button class="btn-calculate" onclick="addTestScore()">Add Score</button>
+                </div>
+
+                <div class="test-list">
+                    <h3>Your Test History</h3>
+                    <div id="test-scores-list"></div>
+                    <div id="avg-score" class="avg-score" style="display: none;">Average: --</div>
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div id="calendar" class="tab-pane">
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <div class="calendar-nav">
+                            <button onclick="previousMonth()">Previous</button>
+                            <span id="current-month-year"></span>
+                            <button onclick="nextMonth()">Next</button>
+                        </div>
+                    </div>
+                    <div id="calendar-grid"></div>
+
+                    <div id="add-event-form">
+                        <h3>Schedule New Study Session</h3>
+                        <div class="input-group">
+                            <label>Date (DD-MM-YYYY)</label>
+                            <input type="date" id="event-date">
+                        </div>
+                        <div class="input-group">
+                            <label>Subject</label>
+                            <input type="text" id="event-subject" placeholder="e.g., Mathematics">
+                        </div>
+                        <div class="input-group">
+                            <label>Topic</label>
+                            <input type="text" id="event-topic" placeholder="e.g., Algebra">
+                        </div>
+                        <div class="input-group">
+                            <label>Time</label>
+                            <input type="time" id="event-time">
+                        </div>
+                        <div class="input-group">
+                            <label>📝 Notes</label>
+                            <textarea id="event-notes" rows="3" placeholder="Any additional notes..." style="width: 100%; padding: 12px; border: 2px solid #e1e5e9; border-radius: 10px; font-size: 16px; background: #fafbfc; box-sizing: border-box; resize: vertical;"></textarea>
+                        </div>
+                        <button class="btn-calculate" id="save-event-btn">Save Event</button>
+                        <button id="cancel-event-btn" style="background: var(--danger-color); margin-left: 10px; padding: 14px 20px; border: none; border-radius: 12px; color: white; font-weight: 600; cursor: pointer;">Cancel</button>
+                    </div>
+
+                    <div id="day-events-panel">
+                        <h3>Events for Selected Day</h3>
+                        <div id="day-events-list" class="event-list"></div>
+                        <button class="btn-calculate" id="back-to-calendar-btn">Back to Calendar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHATBOT - INSIDE DASHBOARD only shows after login -->
+    <button id="bot-toggle-btn" title="Chat with EduWise Bot">💬</button>
+    <div id="chatbot-panel">
+        <div id="chatbot-messages"></div>
+        <form id="chatbot-form">
+            <input id="chatbot-input" autocomplete="off" placeholder="Ask me something...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <!-- REMINDER POPUP -->
+    <div id="reminder-popup" class="reminder-popup hidden">
+      <div class="reminder-box">
+        <h3 id="popup-title">Add Reminder</h3>
+        <input type="text" id="reminder-text" placeholder="Enter reminder...">
+        <div class="popup-buttons">
+          <button id="save-reminder" onclick="saveReminder()">Save</button>
+          <button id="delete-reminder" class="delete-btn hidden" onclick="deleteReminder()">Delete</button>
+          <button onclick="closeReminderPopup()">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+        let loggedInUser = null;
+        let loggedInUserData = null;
+        let selectedSubject = null;
+        let currentCard = null;
+        let currentTab = "study";
+        let testScores = [];
+        let calendarEvents = [];
+        let currentCalendarDate = new Date();
+        let selectedCalendarDay = null;
+
+        // Reminder state
+        let editingReminderId = null;
+        let selectedReminderDate = null;
+
+        // Subject and Chapter Data
+        const subjectsByGrade = {
+            1: ["Math", "English", "Hindi", "Computer", "Kannada", "EVS"],
+            2: ["Math", "English", "Hindi", "Computer", "Kannada", "EVS"],
+            3: ["Math", "English", "Hindi", "Kannada", "Science", "Social Studies"],
+            4: ["Math", "English Literature", "Hindi", "Kannada", "Science", "Social Studies", "Computer", "English Language"],
+            5: ["Math", "Science", "Social Science", "English Literature", "English Language", "Computer"],
+            6: ["Math", "Biology", "History Civics", "English Literature", "Kannada", "Chemistry", "Geography", "Physics", "English Language", "Computer"],
+            7: ["Math", "Biology", "History Civics", "English Literature", "Kannada", "Chemistry", "Geography", "Physics", "English Language", "Computer"],
+            8: ["Math", "Biology", "History Civics", "English Literature", "Kannada", "Chemistry", "Geography", "Physics", "English Language", "Computer"],
+            9: ["Math", "Biology", "History Civics", "English Literature", "Kannada", "Hindi", "Chemistry", "Geography", "Physics", "English Language", "Computer", "EVS", "Art", "PE", "Economics"],
+            10: ["Math", "Biology", "History Civics", "English Literature", "Kannada", "Hindi", "Chemistry", "Geography", "Physics", "English Language", "Computer", "EVS", "Art", "PE", "Economics"]
+        };
+
+        const flashcards = [
+            { front: "What is 2 + 2?", back: "4" },
+            { front: "Capital of France?", back: "Paris" },
+            { front: "H2O is the formula for?", back: "Water" },
+            { front: "Largest planet?", back: "Jupiter" },
+            { front: "Photosynthesis needs?", back: "Sunlight, CO2, Water" }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabNavigation();
+            initStudyCards();
+            initChatbot();
+            initCalendarButtons();
+            loadTheme();
+        });
+
+        function login(event) {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                alert('Please enter username and password!');
+                return;
+            }
+
+            const userDataString = localStorage.getItem(`user${username}`);
+            if (!userDataString) {
+                alert('User not found! Please register first.');
+                return;
+            }
+
+            try {
+                const userData = JSON.parse(userDataString);
+                if (userData.password !== password) {
+                    alert('Incorrect password!');
+                    return;
+                }
+
+                loggedInUser = username;
+                loggedInUserData = userData;
+
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('register-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
+				document.getElementById("bot-toggle-btn").style.display = "block";
+				document.getElementById("chatbot-panel").style.display = "flex";
+
+                document.getElementById('welcome-msg').innerText = `Welcome back, ${username}! Grade ${userData.grade}`;
+                populateSubjectDropdown(userData.grade);
+                loadTestScores();
+                loadCalendarEvents();
+                renderCalendar();
+
+                // Initial Chatbot Message
+                appendMessage('bot', 'Hello! I am EduWise, your AI study assistant. I can provide information on your Notes, Syllabus, Test Worksheets, Exam Tips, and Flashcards. How can I assist you today?');
+            } catch (e) {
+                alert('Login failed. Please try again.');
+            }
+        }
+
+        function initTabNavigation() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+            });
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+
+            if (tab === 'test-scores') loadTestScores();
+            if (tab === 'calendar') renderCalendar();
+        }
+
+        function initStudyCards() {
+            document.querySelectorAll('.study-cards .card').forEach(card => {
+                card.addEventListener('click', function() {
+                    if (!selectedSubject) {
+                        alert('Please select a subject first!');
+                        return;
+                    }
+
+                    currentCard = this.dataset.card;
+
+                    if (currentCard === 'flashcards') {
+                        document.getElementById('chapter-select').style.display = 'none';
+                        document.getElementById('chapter-content').innerHTML = `<div id="flashcard-container"><div id="flashcard">Click to start!</div><div id="flashcard-buttons"><button id="prev-flashcard" title="Previous Card">Previous</button><button id="flip-flashcard">Flip Card</button><button id="next-flashcard" title="Next Card">Next</button></div></div>`;
+                        document.getElementById('chapter-content').style.textAlign = 'center';
+                        displayFlashcard();
+                        initFlashcardListeners();
+                    } else {
+                        document.getElementById('chapter-select').style.display = 'block';
+                        document.getElementById('chapter-content').innerHTML = '';
+                        document.getElementById('chapter-content').style.textAlign = 'left';
+                    }
+
+                    document.getElementById('study-cards').style.display = 'none';
+                    document.getElementById('chapter-section').style.display = 'block';
+                });
+            });
+
+            document.getElementById('chapter-select').addEventListener('change', showChapterContent);
+            document.getElementById('subject-select').addEventListener('change', function() {
+                selectedSubject = this.value;
+                if (selectedSubject) {
+                    document.getElementById('study-cards').style.display = 'flex';
+                }
+            });
+        }
+
+        function populateSubjectDropdown(grade) {
+            const subjectSelect = document.getElementById('subject-select');
+            subjectSelect.innerHTML = '<option value="" disabled selected>Select Subject</option>';
+            subjectsByGrade[grade].forEach(subject => {
+                const option = document.createElement('option');
+                option.value = subject;
+                option.textContent = subject;
+                subjectSelect.appendChild(option);
+            });
+            selectedSubject = '';
+        }
+
+        function goBackToStudy() {
+            document.getElementById('chapter-section').style.display = 'none';
+            document.getElementById('study-cards').style.display = selectedSubject ? 'flex' : 'none';
+            document.getElementById('chapter-content').innerHTML = '';
+            document.getElementById('chapter-select').value = '';
+        }
+
+        function showChapterContent() {
+            const chapter = document.getElementById('chapter-select').value;
+            if (!chapter || !selectedSubject || !currentCard) return;
+
+            const contentArea = document.getElementById('chapter-content');
+
+            if (currentCard === 'notes') {
+                contentArea.innerHTML = `<h3>${selectedSubject} - Chapter ${chapter} Notes</h3>
+                <div style="background: linear-gradient(135deg, #e3f2fd, #f0f8ff); padding: 20px; border-radius: 12px;">
+                    <ul style="font-size: 18px; line-height: 1.8;">
+                        <li><strong>Key Concepts</strong> - Main definitions and formulas</li>
+                        <li><strong>Examples</strong> - Step-by-step solutions</li>
+                        <li><strong>Summary</strong> - Quick revision points</li>
+                        <li><strong>Important</strong> - Mark these for exams!</li>
+                    </ul>
+                </div>`;
+            } else if (currentCard === 'syllabus') {
+                contentArea.innerHTML = `<h3>${selectedSubject} - Chapter ${chapter} Syllabus</h3>
+                <div style="background: linear-gradient(135deg, #f0f4f8, #e8f4fd); padding: 20px; border-radius: 12px;">
+                    <p><strong>Topics Covered</strong></p>
+                    <ul style="font-size: 18px;">
+                        <li>Topic 1 - Core concepts</li>
+                        <li>Topic 2 - Applications</li>
+                        <li>Topic 3 - Advanced problems</li>
+                    </ul>
+                    <p><em>Focus Areas: Practice all example problems</em></p>
+                </div>`;
+            } else if (currentCard === 'exam-tips') {
+                contentArea.innerHTML = `<h3>${selectedSubject} - Chapter ${chapter} Exam Tips</h3>
+                <div style="background: linear-gradient(135deg, #fff3cd, #ffeaa7); padding: 20px; border-radius: 12px;">
+                    <ul style="font-size: 18px;">
+                        <li>Practice 10 problems daily</li>
+                        <li>Revise formulas before exam</li>
+                        <li>Time management is key</li>
+                        <li>Write neat answers</li>
+                    </ul>
+                </div>`;
+            } else if (currentCard === 'testpapers') {
+                contentArea.innerHTML = `<h3>${selectedSubject} - Chapter ${chapter} Test Worksheets</h3>
+                <p>This is a downloadable worksheet link for practice. Attempt these 10 questions under timed conditions to test your readiness for the concepts in this chapter.</p>`;
+            }
+        }
+
+        let currentFlashcardIndex = 0;
+        let currentFlashcardFlipped = false;
+
+        function initFlashcardListeners() {
+            document.getElementById('flip-flashcard').addEventListener('click', flipFlashcard);
+            document.getElementById('next-flashcard').addEventListener('click', nextFlashcard);
+            document.getElementById('prev-flashcard').addEventListener('click', prevFlashcard);
+        }
+
+        function displayFlashcard() {
+            const cardDiv = document.getElementById('flashcard');
+            const cardData = flashcards[currentFlashcardIndex];
+            cardDiv.innerHTML = cardData.front;
+            cardDiv.classList.remove('flipped');
+            currentFlashcardFlipped = false;
+        }
+
+        function flipFlashcard() {
+            const cardDiv = document.getElementById('flashcard');
+            const cardData = flashcards[currentFlashcardIndex];
+            if (cardDiv.classList.contains('flipped')) {
+                cardDiv.innerHTML = cardData.front;
+                cardDiv.classList.remove('flipped');
+            } else {
+                cardDiv.innerHTML = cardData.back;
+                cardDiv.classList.add('flipped');
+            }
+            currentFlashcardFlipped = !currentFlashcardFlipped;
+        }
+
+        function nextFlashcard() {
+            currentFlashcardIndex = (currentFlashcardIndex + 1) % flashcards.length;
+            currentFlashcardFlipped = false;
+            displayFlashcard();
+        }
+
+        function prevFlashcard() {
+            currentFlashcardIndex = (currentFlashcardIndex - 1 + flashcards.length) % flashcards.length;
+            currentFlashcardFlipped = false;
+            displayFlashcard();
+        }
+
+        function calculatePercentage() {
+            const obtained = parseFloat(document.getElementById('marks-obtained').value);
+            const total = parseFloat(document.getElementById('total-marks').value);
+
+            if (isNaN(obtained) || isNaN(total) || total <= 0) {
+                document.getElementById('percentage-result').innerHTML = `<div class="result-box" style="background: var(--danger-color);">Invalid input</div>`;
+                return;
+            }
+
+            const percentage = (obtained / total * 100).toFixed(2);
+            document.getElementById('percentage-result').innerHTML = `<div class="result-box">Percentage: ${percentage}%</div>`;
+        }
+
+        function calculateGPA() {
+            const points = parseFloat(document.getElementById('gpa-points').value);
+            const credits = parseFloat(document.getElementById('gpa-credits').value);
+
+            if (isNaN(points) || isNaN(credits) || points < 0 || points > 10 || credits < 1) {
+                document.getElementById('gpa-result').innerHTML = `<div class="result-box" style="background: var(--danger-color);">Invalid input</div>`;
+                return;
+            }
+
+            const gpa = points.toFixed(2);
+            document.getElementById('gpa-result').innerHTML = `<div class="result-box">GPA: ${gpa}</div>`;
+        }
+
+        function addTestScore() {
+            const name = document.getElementById('test-name').value.trim();
+            const score = parseFloat(document.getElementById('test-score').value);
+            const date = document.getElementById('test-date').value;
+
+            if (!name || isNaN(score) || score < 0 || score > 100 || !date) {
+                alert('Please enter valid test details!');
+                return;
+            }
+
+            testScores.unshift([name, score, date]);
+            saveTestScores();
+            document.getElementById('test-name').value = '';
+            document.getElementById('test-score').value = '';
+            document.getElementById('test-date').value = '';
+            loadTestScores();
+        }
+
+        function loadTestScores() {
+            if (!loggedInUser) return;
+
+            const scoresString = localStorage.getItem(`scores${loggedInUser}`);
+            testScores = scoresString ? JSON.parse(scoresString) : [];
+            renderTestScores();
+        }
+
+        function saveTestScores() {
+            if (loggedInUser) {
+                localStorage.setItem(`scores${loggedInUser}`, JSON.stringify(testScores));
+            }
+        }
+
+        function renderTestScores() {
+            const listDiv = document.getElementById('test-scores-list');
+            const avgDiv = document.getElementById('avg-score');
+
+            listDiv.innerHTML = '';
+            if (testScores.length === 0) {
+                listDiv.innerHTML = '<p style="text-align: center; color: #666; font-style: italic; font-size: 18px;">No test scores yet. Add your first score above!</p>';
+                avgDiv.style.display = 'none';
+                return;
+            }
+
+            let totalScore = 0;
+            testScores.forEach((test, index) => {
+                totalScore += test[1];
+                const item = document.createElement('div');
+                item.classList.add('test-item');
+                item.innerHTML = `<div><strong>${test[0]}</strong><br><small>${test[2]}</small></div><div style="font-size: 1.5em; font-weight: 800; color: ${test[1] >= 80 ? '#28a745' : test[1] >= 60 ? '#ffc107' : '#dc3545'};">${test[1]}</div>`;
+                listDiv.appendChild(item);
+            });
+
+            const average = (totalScore / testScores.length).toFixed(1);
+            avgDiv.textContent = `Average: ${average}`;
+            avgDiv.style.display = 'block';
+        }
+
+        function loadCalendarEvents() {
+            if (!loggedInUser) return;
+
+            const eventsString = localStorage.getItem(`calendar${loggedInUser}`);
+            calendarEvents = eventsString ? JSON.parse(eventsString) : [];
+        }
+
+        function saveCalendarEvents() {
+            if (loggedInUser) {
+                localStorage.setItem(`calendar${loggedInUser}`, JSON.stringify(calendarEvents));
+            }
+        }
+
+        function getEventsForDate(dateStr) {
+            return calendarEvents
+                .filter(event => event.date === dateStr)
+                .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+        }
+
+        function renderCalendar() {
+            const month = currentCalendarDate.getMonth();
+            const year = currentCalendarDate.getFullYear();
+            const today = new Date().toISOString().slice(0, 10);
+
+            document.getElementById('current-month-year').textContent =
+                new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentCalendarDate);
+
+            const calendarGrid = document.getElementById('calendar-grid');
+            calendarGrid.innerHTML = '';
+
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            daysOfWeek.forEach(day => {
+                const headerCell = document.createElement('div');
+                headerCell.classList.add('calendar-day', 'header');
+                headerCell.textContent = day;
+                calendarGrid.appendChild(headerCell);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1);
+            const lastDayOfMonth = new Date(year, month + 1, 0);
+            const startDayIndex = firstDayOfMonth.getDay();
+
+            for (let i = 0; i < startDayIndex; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.classList.add('calendar-day');
+                calendarGrid.appendChild(emptyCell);
+            }
+
+            for (let i = 1; i <= lastDayOfMonth.getDate(); i++) {
+                const date = new Date(year, month, i);
+                const dateStr = date.toISOString().slice(0, 10);
+
+                const dayCell = document.createElement('div');
+                dayCell.classList.add('calendar-day');
+                dayCell.textContent = i;
+                dayCell.dataset.date = dateStr;
+
+                if (dateStr === today) dayCell.classList.add('today');
+                if (selectedCalendarDay === dateStr) dayCell.classList.add('selected');
+
+                const dayEvents = getEventsForDate(dateStr);
+                if (dayEvents.length > 0) {
+                    dayCell.classList.add('has-events');
+                    dayEvents.slice(0, 1).forEach(event => {
+                        const eventEl = document.createElement('div');
+                        eventEl.classList.add('event');
+                        if (event.reminder) {
+                            eventEl.textContent = `⏰ ${event.reminder}`;
+                        } else {
+                            eventEl.textContent = event.time ? event.time : `${event.subject} ${event.topic}`;
+                        }
+                        dayCell.appendChild(eventEl);
+                    });
+                    if (dayEvents.length > 1) {
+                        const moreEl = document.createElement('div');
+                        moreEl.classList.add('event');
+                        moreEl.textContent = `${dayEvents.length - 1} more`;
+                        dayCell.appendChild(moreEl);
+                    }
+                }
+
+                dayCell.addEventListener('click', () => selectDay(dateStr));
+                // double-click opens reminder editor for that date
+                dayCell.addEventListener('dblclick', () => openReminderEditor(dateStr));
+
+                calendarGrid.appendChild(dayCell);
+            }
+        }
+
+        function selectDay(dateStr) {
+            selectedCalendarDay = dateStr;
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            const selectedCell = document.querySelector(`.calendar-day[data-date="${dateStr}"]`);
+            if (selectedCell) selectedCell.classList.add('selected');
+            renderDayEvents(dateStr);
+            document.getElementById('add-event-form').classList.remove('active');
+            document.getElementById('day-events-panel').classList.add('active');
+        }
+
+        function renderDayEvents(dateStr) {
+            const dayEvents = getEventsForDate(dateStr);
+            const listDiv = document.getElementById('day-events-list');
+
+            listDiv.innerHTML = '';
+            if (dayEvents.length === 0) {
+                listDiv.innerHTML = `<p>No events scheduled for this day. <button class="btn-calculate" onclick="openEventFormForDate('${dateStr}')" style="margin-top: 10px; padding: 8px 15px; width: auto;">Add New</button></p>`;
+                return;
+            }
+
+            dayEvents.forEach((event, index) => {
+                const item = document.createElement('div');
+                item.classList.add('event-item');
+                item.innerHTML = `<div>
+                        <strong>${event.subject || 'Study Session'}</strong><br>
+                        <small>${event.topic || ''} ${event.time || ''}</small>
+                        ${event.notes ? `<p style="font-size: 12px; margin-top: 5px; color: var(--text-color); opacity: 0.8;">Notes: ${event.notes}</p>` : ''}
+                        ${event.reminder ? `<p style="font-size: 12px; margin-top: 5px; color: var(--text-color); opacity: 0.8;">Reminder: ${event.reminder}</p>` : ''}
+                    </div>
+                    <button onclick="deleteEvent('${dateStr}', ${index})" class="delete-event">Delete</button>`;
+
+                // click on the left part opens reminder editor for that event
+                item.querySelector('div').addEventListener('click', () => {
+                    openReminderEditor(event.date, event.id);
+                });
+
+                listDiv.appendChild(item);
+            });
+        }
+
+        function openEventFormForDate(dateStr) {
+            selectedCalendarDay = dateStr;
+            document.getElementById('event-date').value = dateStr;
+            document.getElementById('event-subject').value = '';
+            document.getElementById('event-topic').value = '';
+            document.getElementById('event-time').value = '';
+            document.getElementById('event-notes').value = '';
+
+            document.getElementById('add-event-form').classList.add('active');
+            document.getElementById('day-events-panel').classList.remove('active');
+
+            document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+            const selectedCell = document.querySelector(`.calendar-day[data-date="${dateStr}"]`);
+            if (selectedCell) selectedCell.classList.add('selected');
+        }
+
+        function addEvent() {
+            const date = document.getElementById('event-date').value;
+            const subject = document.getElementById('event-subject').value.trim();
+            const topic = document.getElementById('event-topic').value.trim();
+            const time = document.getElementById('event-time').value;
+            const notes = document.getElementById('event-notes').value.trim();
+
+            if (!date || !subject || !topic) {
+                alert('Please enter Date, Subject, and Topic.');
+                return;
+            }
+
+            const newEvent = { id: Date.now(), date, subject, topic, time, notes };
+            calendarEvents.push(newEvent);
+            saveCalendarEvents();
+            renderCalendar();
+            selectDay(date);
+        }
+
+        function deleteEvent(dateStr, index) {
+            const dayEvents = getEventsForDate(dateStr);
+            if (dayEvents[index]) {
+                const targetId = dayEvents[index].id;
+                calendarEvents = calendarEvents.filter(e => e.id !== targetId);
+                saveCalendarEvents();
+                renderCalendar();
+                renderDayEvents(dateStr);
+            }
+        }
+
+        function previousMonth() {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+            selectedCalendarDay = null;
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+            selectedCalendarDay = null;
+            renderCalendar();
+        }
+
+        function initCalendarButtons() {
+            document.getElementById('save-event-btn').addEventListener('click', addEvent);
+            document.getElementById('cancel-event-btn').addEventListener('click', () => {
+                document.getElementById('add-event-form').classList.remove('active');
+                if (selectedCalendarDay) {
+                    renderDayEvents(selectedCalendarDay);
+                    document.getElementById('day-events-panel').classList.add('active');
+                }
+            });
+
+            document.getElementById('back-to-calendar-btn').addEventListener('click', () => {
+                document.getElementById('day-events-panel').classList.remove('active');
+                selectedCalendarDay = null;
+                renderCalendar();
+            });
+        }
+
+        // Reminder popup functions
+        function openReminderEditor(dateStr, reminderId = null) {
+            selectedReminderDate = dateStr;
+            editingReminderId = reminderId;
+
+            const popup = document.getElementById('reminder-popup');
+            const title = document.getElementById('popup-title');
+            const textInput = document.getElementById('reminder-text');
+            const deleteBtn = document.getElementById('delete-reminder');
+
+            if (reminderId) {
+                title.textContent = 'Edit Reminder';
+                deleteBtn.classList.remove('hidden');
+
+                const dayEvents = calendarEvents.filter(e => e.date === dateStr);
+                const reminder = dayEvents.find(e => e.id === reminderId);
+                textInput.value = reminder ? (reminder.reminder || reminder.topic || '') : '';
+            } else {
+                title.textContent = 'Add Reminder';
+                deleteBtn.classList.add('hidden');
+                textInput.value = '';
+            }
+
+            popup.classList.remove('hidden');
+            textInput.focus();
+        }
+
+        function closeReminderPopup() {
+            document.getElementById('reminder-popup').classList.add('hidden');
+            document.getElementById('reminder-text').value = '';
+            editingReminderId = null;
+            selectedReminderDate = null;
+        }
+
+        function saveReminder() {
+            const text = document.getElementById('reminder-text').value.trim();
+            if (!selectedReminderDate) return;
+
+            if (!text) {
+                alert('Please enter a reminder.');
+                return;
+            }
+
+            if (editingReminderId) {
+                calendarEvents = calendarEvents.map(e => {
+                    if (e.id === editingReminderId) {
+                        return { ...e, reminder: text };
+                    }
+                    return e;
+                });
+            } else {
+                const newEvent = {
+                    id: Date.now(),
+                    date: selectedReminderDate,
+                    subject: 'Reminder',
+                    topic: text,
+                    time: '',
+                    notes: '',
+                    reminder: text
+                };
+                calendarEvents.push(newEvent);
+            }
+
+            saveCalendarEvents();
+            renderCalendar();
+            if (selectedReminderDate) renderDayEvents(selectedReminderDate);
+            closeReminderPopup();
+        }
+
+        function deleteReminder() {
+            if (!editingReminderId || !selectedReminderDate) {
+                closeReminderPopup();
+                return;
+            }
+
+            calendarEvents = calendarEvents.filter(e => e.id !== editingReminderId);
+            saveCalendarEvents();
+            renderCalendar();
+            renderDayEvents(selectedReminderDate);
+            closeReminderPopup();
+        }
+
+        function showRegister() {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('register-screen').style.display = 'flex';
+        }
+
+        function register(event) {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value.trim();
+            const password = document.getElementById('register-password').value;
+            const grade = document.getElementById('register-grade').value;
+
+            if (localStorage.getItem(`user${username}`)) {
+                alert('User already exists!');
+                return;
+            }
+
+            if (!username || !password || !grade) {
+                alert('Please fill all fields!');
+                return;
+            }
+
+            localStorage.setItem(`user${username}`, JSON.stringify({ password, grade, subjects: subjectsByGrade[grade] }));
+            alert(`Registration successful for ${username}! You can now login.`);
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('login-screen').style.display = 'flex';
+            document.getElementById('register-screen').style.display = 'none';
+            document.getElementById('dashboard-screen').style.display = 'none';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+        }
+
+        function loadTheme() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark');
+            }
+            document.getElementById('theme-toggle').addEventListener('click', () => {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+            });
+        }
+
+        // ==================== ADVANCED CHATBOT FROM V6 ====================
+        let chatbotContext = {
+            needsSubject: false,
+            needsChapter: false,
+            cardType: null,
+            subject: null,
+            chapter: null
+        };
+
+        function getSubjectsList() {
+            return loggedInUserData ? subjectsByGrade[loggedInUserData.grade] : [];
+        }
+
+        function appendMessage(sender, text) {
+            const messagesDiv = document.getElementById('chatbot-messages');
+            const msgEl = document.createElement('div');
+
+            msgEl.classList.add('chat-message');
+
+            if (sender === 'user') {
+                msgEl.classList.add('user-message');
+            } else {
+                msgEl.classList.add('bot-message');
+            }
+
+            // Convert *text* to bold
+            msgEl.innerHTML = text.replace(/\*(.+?)\*/g, '<strong>$1</strong>');
+            messagesDiv.appendChild(msgEl);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll
+        }
+
+        function generateBotResponse(message) {
+            const lowerCaseMsg = message.toLowerCase();
+            const subjects = getSubjectsList();
+
+            // Keywords for card types
+            const keywords = {
+                'notes': 'notes',
+                'syllabus': 'syllabus',
+                'tests': 'testpapers',
+                'worksheets': 'testpapers',
+                'exam': 'exam-tips',
+                'tips': 'exam-tips',
+                'flashcards': 'flashcards'
+            };
+
+            // Detect card type
+            let detectedCardType = null;
+            for (const [keyword, cardType] of Object.entries(keywords)) {
+                if (lowerCaseMsg.includes(keyword)) {
+                    detectedCardType = cardType;
+                    break;
+                }
+            }
+
+            // Detect subject
+            const detectedSubject = subjects.find(s => lowerCaseMsg.includes(s.toLowerCase()));
+
+            // Detect chapter
+            const chapterMatch = lowerCaseMsg.match(/chapter (\d)/i);
+            const detectedChapter = chapterMatch ? chapterMatch[1] : null;
+
+            // State machine logic
+            if (chatbotContext.needsSubject) {
+                if (detectedSubject) {
+                    chatbotContext.subject = detectedSubject;
+                    chatbotContext.needsSubject = false;
+                    chatbotContext.needsChapter = true;
+                    return `Great! I've selected *${detectedSubject}*. Now, which chapter would you like to study? (1-5)`;
+                } else {
+                    return `I didn't catch that subject. Available subjects: ${subjects.join(', ')}. Which one?`;
+                }
+            }
+
+            if (chatbotContext.needsChapter) {
+                if (detectedChapter) {
+                    chatbotContext.chapter = detectedChapter;
+                    chatbotContext.needsChapter = false;
+
+                    const content = getChapterContent(chatbotContext.subject, chatbotContext.cardType, chatbotContext.chapter);
+                    return content;
+                } else {
+                    return `Please specify a chapter number (1-5) for ${chatbotContext.subject}.`;
+                }
+            }
+
+            // If user didn't mention a card type
+            if (!detectedCardType) {
+                return `I can help you with: *Notes*, *Flashcards*, *Syllabus*, *Exam Tips*, or *Test Papers*. Which would you like to study?`;
+            }
+
+            // If no subject selected yet
+            if (!detectedSubject) {
+                chatbotContext.cardType = detectedCardType;
+                chatbotContext.needsSubject = true;
+                return `Which subject would you like to study? Available: ${subjects.join(', ')}`;
+            }
+
+            // User specified both subject and card type
+            chatbotContext.subject = detectedSubject;
+            chatbotContext.cardType = detectedCardType;
+            chatbotContext.needsSubject = false;
+            chatbotContext.needsChapter = true;
+            return `Perfect! I'll get you *${detectedCardType}* for *${detectedSubject}*. Which chapter? (1-5)`;
+        }
+
+        function getChapterContent(subject, cardType, chapter) {
+            const chapterName = `Chapter ${chapter}`;
+            const grade = loggedInUserData ? loggedInUserData.grade : 'NA';
+            let baseContent = `Grade ${grade} ${subject} - ${chapterName}.`;
+
+            switch (cardType) {
+                case 'notes':
+                    return `<h3>📚 Notes: ${baseContent}</h3><p>Here you will find detailed explanations, diagrams, and summary points on the main topics. Focus on the definitions and formulas related to this chapter.</p><ul><li>Topic A: Definition and examples.</li><li>Topic B: Important formula/theorem.</li><li>Topic C: Practical application.</li></ul>`;
+
+                case 'syllabus':
+                    return `<h3>📋 Syllabus: ${baseContent}</h3><p>This section covers the learning objectives, estimated study time: 2 hours, and weightage: 15% for this chapter in your exams.</p><p><strong>Learning Objectives:</strong> By the end of this chapter, you should be able to 1) understand the core process, and 2) solve problems using Method X.</p>`;
+
+                case 'exam-tips':
+                    return `<h3>💡 Exam Tips: ${baseContent}</h3><p>To score well on this chapter, remember to:</p><ul><li>Practice 5 short answer questions daily.</li><li>Review diagrams or charts from Topic A.</li><li>Spend 15 minutes reviewing mistakes from previous tests.</li></ul>`;
+
+                case 'testpapers':
+                    return `<h3>📝 Test Worksheets: ${baseContent}</h3><p>This is a downloadable worksheet link for practice. Attempt these 10 questions under timed conditions to test your readiness for the concepts in this chapter.</p>`;
+
+                case 'flashcards':
+                    return `<h3>🎯 Flashcards: ${baseContent}</h3><p>Flashcards are available to help you memorize key terms, definitions, and concepts from this chapter through spaced repetition.</p>`;
+
+                default:
+                    return `<p>I'm not sure what kind of resource you're looking for. Try asking for Notes, Syllabus, Exam Tips, Flashcards, or Test Worksheets.</p>`;
+            }
+        }
+
+        function handleChatbotSubmit(e) {
+            e.preventDefault();
+            const userMsg = document.getElementById('chatbot-input').value.trim();
+
+            if (!userMsg) return;
+
+            // Display user message
+            appendMessage('user', userMsg);
+            document.getElementById('chatbot-input').value = '';
+
+            // Generate and display bot response
+            setTimeout(() => {
+                const botResponse = generateBotResponse(userMsg);
+                appendMessage('bot', botResponse);
+            }, 500);
+        }
+
+        function initChatbot() {
+            const botToggleBtn = document.getElementById('bot-toggle-btn');
+            const chatbotPanel = document.getElementById('chatbot-panel');
+            const chatbotForm = document.getElementById('chatbot-form');
+
+            botToggleBtn.addEventListener('click', () => {
+                chatbotPanel.style.display = chatbotPanel.style.display === 'flex' ? 'none' : 'flex';
+            });
+
+            chatbotForm.addEventListener('submit', handleChatbotSubmit);
+        }
+    </script>
+</body>
+</html>
+mix4_emoji (1).html
+Displaying mix4_emoji (1).html.
