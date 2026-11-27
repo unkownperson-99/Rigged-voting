@@ -140,7 +140,7 @@ const TUTORIAL_DISABLED_UNITS: UnitType[] = [
 ];
 
 const DEFAULT_OPTIONS = {
-  selectedMap: GameMapType.World,
+  selectedMap: listedMaps[0]?.type ?? GameMapType.World,
   selectedDifficulty: Difficulty.Easy,
   bots: 400,
   infiniteGold: false,
@@ -897,7 +897,12 @@ export class SinglePlayerModal extends BaseModal {
 
   private async importPresetConfig(config: LobbyPresetConfig) {
     this.useRandomMap = config.useRandomMap ?? false;
-    this.selectedMap = this.useRandomMap ? getRandomMapType() : config.gameMap;
+    const presetMapListed = listedMaps.some((m) => m.type === config.gameMap);
+    this.selectedMap = this.useRandomMap
+      ? getRandomMapType()
+      : presetMapListed
+        ? config.gameMap
+        : DEFAULT_OPTIONS.selectedMap;
     this.compactMap = config.compactMap ?? false;
     this.selectedDifficulty = config.difficulty;
     this.gameMode = config.gameMode;

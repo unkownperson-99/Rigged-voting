@@ -22,10 +22,11 @@ import {
   svg,
 } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { translateText } from "../Utils";
+import { soloListedMaps } from "../SoloMaps";
 import "./Difficulties";
 import "./DifficultyInfo";
 import "./FluentSlider";
+import { translateText } from "../Utils";
 import "./map/MapPicker";
 
 const ACTIVE_CARD =
@@ -466,24 +467,28 @@ export class GameConfigSettings extends LitElement {
     return html`
       <div class=${this.sectionGapClass}>
         <div class=${lockedClass} ?inert=${this.locked}>
-          ${renderSection(
-            MAP_ICON,
-            "text-aquarius",
-            "bg-malibu-blue/20",
-            "map.map",
-            html`<map-picker
-              .selectedMap=${settings.map.selected}
-              .useRandomMap=${settings.map.useRandom}
-              .randomMapDivider=${settings.map.randomMapDivider ?? false}
-              .showMedals=${settings.map.showMedals ?? false}
-              .mapWins=${settings.map.mapWins ?? new Map()}
-              .onSelectMap=${this.handleSelectMap}
-              .onSelectRandom=${this.handleSelectRandom}
-              .searchQuery=${this.mapSearchQuery}
-            ></map-picker>`,
-            undefined,
-            this.renderMapSearchInput(),
-          )}
+          ${
+            soloListedMaps.length > 1
+              ? renderSection(
+                  MAP_ICON,
+                  "text-aquarius",
+                  "bg-malibu-blue/20",
+                  "map.map",
+                  html`<map-picker
+                    .selectedMap=${settings.map.selected}
+                    .useRandomMap=${settings.map.useRandom}
+                    .randomMapDivider=${settings.map.randomMapDivider ?? false}
+                    .showMedals=${settings.map.showMedals ?? false}
+                    .mapWins=${settings.map.mapWins ?? new Map()}
+                    .onSelectMap=${this.handleSelectMap}
+                    .onSelectRandom=${this.handleSelectRandom}
+                    .searchQuery=${this.mapSearchQuery}
+                  ></map-picker>`,
+                  undefined,
+                  this.renderMapSearchInput(),
+                )
+              : nothing
+          }
           ${renderSection(
             DIFFICULTY_ICON,
             "text-green-400",

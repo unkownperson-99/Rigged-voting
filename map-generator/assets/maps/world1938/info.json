@@ -1,0 +1,364 @@
+{
+  "$schema": "../../../info.schema.json",
+  "id": "World1938",
+  "name": "World 1938",
+  "translation_key": "map.world1938",
+  "categories": [
+    "world",
+    "countries"
+  ],
+  "author": "Springveil Studio",
+  "description": "World land as it stood in 1938. Borders from the historical basemaps dataset (aourednik, GPL-3.0).",
+  "nations": [
+    {
+      "coordinates": [
+        1013,
+        282
+      ],
+      "name": "Spain",
+      "flag": "Spain"
+    },
+    {
+      "coordinates": [
+        1014,
+        205
+      ],
+      "name": "United Kingdom",
+      "flag": "United Kingdom"
+    },
+    {
+      "coordinates": [
+        1729,
+        428
+      ],
+      "name": "Philippines",
+      "flag": "Philippines"
+    },
+    {
+      "coordinates": [
+        2009,
+        768
+      ],
+      "name": "New Zealand",
+      "flag": "New Zealand"
+    },
+    {
+      "coordinates": [
+        649,
+        739
+      ],
+      "name": "Argentina",
+      "flag": "Argentina"
+    },
+    {
+      "coordinates": [
+        1632,
+        245
+      ],
+      "name": "Mongolia",
+      "flag": "Mongolia"
+    },
+    {
+      "coordinates": [
+        1058,
+        226
+      ],
+      "name": "Belgium",
+      "flag": "Belgium"
+    },
+    {
+      "coordinates": [
+        1060,
+        248
+      ],
+      "name": "France",
+      "flag": "France"
+    },
+    {
+      "coordinates": [
+        1146,
+        280
+      ],
+      "name": "Albania",
+      "flag": "Albania"
+    },
+    {
+      "coordinates": [
+        985,
+        290
+      ],
+      "name": "Portugal",
+      "flag": "Portugal"
+    },
+    {
+      "coordinates": [
+        1210,
+        292
+      ],
+      "name": "Turkey",
+      "flag": "Turkey"
+    },
+    {
+      "coordinates": [
+        1338,
+        328
+      ],
+      "name": "Iran",
+      "flag": "Iran"
+    },
+    {
+      "coordinates": [
+        437,
+        376
+      ],
+      "name": "Mexico",
+      "flag": "Mexico"
+    },
+    {
+      "coordinates": [
+        1608,
+        441
+      ],
+      "name": "Siam",
+      "flag": "Siam"
+    },
+    {
+      "coordinates": [
+        716,
+        577
+      ],
+      "name": "Brazil",
+      "flag": "Brazil"
+    },
+    {
+      "coordinates": [
+        1064,
+        217
+      ],
+      "name": "Netherlands",
+      "flag": "Netherlands"
+    },
+    {
+      "coordinates": [
+        1131,
+        351
+      ],
+      "name": "Libya",
+      "flag": "Libya"
+    },
+    {
+      "coordinates": [
+        1208,
+        355
+      ],
+      "name": "Egypt",
+      "flag": "Egypt"
+    },
+    {
+      "coordinates": [
+        1255,
+        463
+      ],
+      "name": "Ethiopia",
+      "flag": "Ethiopia"
+    },
+    {
+      "coordinates": [
+        1611,
+        515
+      ],
+      "name": "Dutch East Indies",
+      "flag": "Dutch East Indies"
+    },
+    {
+      "coordinates": [
+        1118,
+        143
+      ],
+      "name": "Norway",
+      "flag": "Norway"
+    },
+    {
+      "coordinates": [
+        1174,
+        270
+      ],
+      "name": "Bulgaria",
+      "flag": "Bulgaria"
+    },
+    {
+      "coordinates": [
+        1177,
+        251
+      ],
+      "name": "Romania",
+      "flag": "Romania"
+    },
+    {
+      "coordinates": [
+        1284,
+        376
+      ],
+      "name": "Saudi Arabia",
+      "flag": "Saudi Arabia"
+    },
+    {
+      "coordinates": [
+        1667,
+        335
+      ],
+      "name": "China",
+      "flag": "China"
+    },
+    {
+      "coordinates": [
+        1142,
+        234
+      ],
+      "name": "Czechoslovakia",
+      "flag": "Czechoslovakia"
+    },
+    {
+      "coordinates": [
+        1142,
+        244
+      ],
+      "name": "Hungary",
+      "flag": "Hungary"
+    },
+    {
+      "coordinates": [
+        1095,
+        227
+      ],
+      "name": "Germany",
+      "flag": "Germany"
+    },
+    {
+      "coordinates": [
+        1163,
+        215
+      ],
+      "name": "Poland",
+      "flag": "Poland"
+    },
+    {
+      "coordinates": [
+        1128,
+        162
+      ],
+      "name": "Sweden",
+      "flag": "Sweden"
+    },
+    {
+      "coordinates": [
+        530,
+        207
+      ],
+      "name": "Canada",
+      "flag": "Canada"
+    },
+    {
+      "coordinates": [
+        524,
+        290
+      ],
+      "name": "United States",
+      "flag": "United States"
+    },
+    {
+      "coordinates": [
+        1797,
+        654
+      ],
+      "name": "Australia",
+      "flag": "Australia"
+    },
+    {
+      "coordinates": [
+        1179,
+        145
+      ],
+      "name": "Finland",
+      "flag": "Finland"
+    },
+    {
+      "coordinates": [
+        798,
+        97
+      ],
+      "name": "Denmark",
+      "flag": "Denmark"
+    },
+    {
+      "coordinates": [
+        1143,
+        264
+      ],
+      "name": "Yugoslavia",
+      "flag": "Yugoslavia"
+    },
+    {
+      "coordinates": [
+        1105,
+        267
+      ],
+      "name": "Italy",
+      "flag": "Italy"
+    },
+    {
+      "coordinates": [
+        1509,
+        379
+      ],
+      "name": "British India",
+      "flag": "British India"
+    },
+    {
+      "coordinates": [
+        1542,
+        191
+      ],
+      "name": "Soviet Union",
+      "flag": "Soviet Union"
+    },
+    {
+      "coordinates": [
+        1164,
+        290
+      ],
+      "name": "Greece",
+      "flag": "Greece"
+    },
+    {
+      "coordinates": [
+        1162,
+        664
+      ],
+      "name": "South Africa",
+      "flag": "South Africa"
+    },
+    {
+      "coordinates": [
+        1758,
+        298
+      ],
+      "name": "Japan",
+      "flag": "Japan"
+    }
+  ],
+  "layers": [
+    {
+      "id": "w1938land",
+      "placement": "land",
+      "alpha": 0.75,
+      "nukeable": true
+    },
+    {
+      "id": "w1938water",
+      "placement": "water",
+      "alpha": 0.3,
+      "nukeable": false
+    }
+  ]
+}

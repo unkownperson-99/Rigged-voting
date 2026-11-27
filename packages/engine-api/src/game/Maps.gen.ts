@@ -145,6 +145,7 @@ export enum GameMapType {
   WhiteSea = "White Sea", // map-generator/assets/maps/whitesea/info.json
   World = "World", // map-generator/assets/maps/world/info.json
   World10000 = "World 10000", // map-generator/assets/maps/world10000/info.json
+  World1938 = "World 1938", // map-generator/assets/maps/world1938/info.json
   World4000 = "World 4000", // map-generator/assets/maps/world4000/info.json
   WorldInverted = "World Inverted", // map-generator/assets/maps/worldinverted/info.json
   YangtzeRiver = "Yangtze River", // map-generator/assets/maps/yangtzeriver/info.json
@@ -2679,6 +2680,19 @@ export const maps: readonly MapInfo[] = [
     ],
     author: "Patrick Plays Badly",
     descriptionKey: "map_description.world10000",
+  },
+  {
+    id: "World1938",
+    type: GameMapType.World1938,
+    translationKey: "map.world1938",
+    categories: ["world", "countries"],
+    defaultNationCount: 42,
+    layers: [
+      { id: "w1938land", placement: "land", nukeable: true },
+      { id: "w1938water", placement: "water" },
+    ],
+    author: "Springveil Studio",
+    descriptionKey: "map_description.world1938",
   },
   {
     id: "World4000",

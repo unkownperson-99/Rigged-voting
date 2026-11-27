@@ -8,16 +8,7 @@ import { GameMapType, listedMaps } from "@openfront/engine-api/game/GameTypes";
  * add its GameMapType here and keep its folder in resources/maps/.
  */
 export const SOLO_MAP_TYPES: ReadonlySet<GameMapType> = new Set<GameMapType>([
-  GameMapType.World,
-  GameMapType.Europe,
-  GameMapType.Asia,
-  GameMapType.Africa,
-  GameMapType.NorthAmerica,
-  GameMapType.SouthAmerica,
-  GameMapType.Australia,
-  GameMapType.UnitedStates,
-  GameMapType.Japan,
-  GameMapType.Britannia,
+  GameMapType.World1938,
 ]);
 
 /** Listed maps restricted to SOLO_MAP_TYPES. */

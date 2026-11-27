@@ -39,7 +39,7 @@ function userMe(): UserMeResponse {
     player: {
       achievements: {
         singleplayerMap: [
-          { mapName: GameMapType.World, difficulty: Difficulty.Hard },
+          { mapName: GameMapType.World1938, difficulty: Difficulty.Hard },
         ],
       },
     },
@@ -57,7 +57,7 @@ describe("SinglePlayerModal and userMeResponse", () => {
     const modal = document.createElement("single-player-modal") as any;
     document.body.appendChild(modal);
 
-    expect(modal.mapWins.get(GameMapType.World)).toEqual(
+    expect(modal.mapWins.get(GameMapType.World1938)).toEqual(
       new Set([Difficulty.Hard]),
     );
   });

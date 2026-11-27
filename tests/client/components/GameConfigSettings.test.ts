@@ -14,6 +14,11 @@ vi.mock("../../../src/client/Utils", () => ({
 }));
 // The map grid isn't under test and needs IntersectionObserver.
 vi.mock("../../../src/client/components/map/MapPicker", () => ({}));
+// Several maps are offered here, so the map section is shown.
+vi.mock("../../../src/client/SoloMaps", async () => {
+  const gameTypes = await import("@openfront/engine-api/game/GameTypes");
+  return { soloListedMaps: gameTypes.listedMaps };
+});
 
 const settings: GameConfigSettingsData = {
   map: { selected: GameMapType.World, useRandom: false },
