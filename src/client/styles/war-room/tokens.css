@@ -1,0 +1,20 @@
+/* War-room palette and type: the HOI4-inspired chrome (olive, gunmetal, brass).
+   The map keeps its own colours; this is the frame around it. Utilities come
+   from these as bg-wr-panel, text-wr-ink-dim, border-wr-line, font-wr-mono. */
+@theme {
+  --color-wr-base: #12140e;
+  --color-wr-panel: #1b1f16;
+  --color-wr-raised: #252a1e;
+  --color-wr-line: #4a5233;
+  --color-wr-steel: #2c3136;
+  --color-wr-ink: #d8cdb0;
+  /* Lightened from #938B70 so small labels pass AA on raised surfaces too. */
+  --color-wr-ink-dim: #a39b80;
+  --color-wr-brass: #b08d4a;
+  --color-wr-alert: #8a3b2a;
+  --color-wr-allied: #4c6a7a;
+
+  --font-wr-display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --font-wr-body: "Barlow", system-ui, sans-serif;
+  --font-wr-mono: "JetBrains Mono", ui-monospace, monospace;
+}

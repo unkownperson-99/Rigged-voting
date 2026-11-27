@@ -1,0 +1,176 @@
+/* War-room component classes. Built by the helpers in
+   src/client/components/warroom/WarRoomParts.ts; apply them to any markup. */
+@layer components {
+  /* Panel: flat, hairline-bordered, with a very faint ruled texture. The grain
+     sits at 4% so it never competes with small numbers. */
+  .wr-panel {
+    background-color: var(--color-wr-panel);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        rgb(216 205 176 / 0.04) 0 1px,
+        transparent 1px 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        rgb(216 205 176 / 0.04) 0 1px,
+        transparent 1px 4px
+      );
+    border: 1px solid var(--color-wr-line);
+    box-shadow: inset 0 1px 0 rgb(216 205 176 / 0.06);
+    color: var(--color-wr-ink);
+    font-family: var(--font-wr-body);
+  }
+
+  /* Key panels only: a 6px cut on the top-right and bottom-left corners. */
+  .wr-chamfer {
+    clip-path: polygon(
+      0 0,
+      calc(100% - 6px) 0,
+      100% 6px,
+      100% 100%,
+      6px 100%,
+      0 calc(100% - 6px)
+    );
+  }
+
+  .wr-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-wr-line);
+    background-color: var(--color-wr-raised);
+    font-family: var(--font-wr-display);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-wr-ink);
+  }
+
+  .wr-label {
+    font-family: var(--font-wr-display);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-wr-ink-dim);
+  }
+
+  /* Buttons are engraved: a dark lower edge that reads as a bevel. Hover
+     inverts instantly; nothing floats or fades. */
+  .wr-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    height: 2.25rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-wr-line);
+    background-color: var(--color-wr-raised);
+    color: var(--color-wr-ink);
+    box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.45);
+    font-family: var(--font-wr-display);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      background-color 90ms linear,
+      color 90ms linear,
+      border-color 90ms linear;
+    cursor: pointer;
+  }
+  .wr-btn:hover {
+    background-color: var(--color-wr-ink);
+    border-color: var(--color-wr-ink);
+    color: var(--color-wr-base);
+    box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.35);
+  }
+  .wr-btn:active {
+    box-shadow: inset 0 2px 0 rgb(0 0 0 / 0.45);
+  }
+  .wr-btn--primary {
+    background-color: var(--color-wr-brass);
+    border-color: var(--color-wr-brass);
+    color: var(--color-wr-base);
+  }
+  .wr-btn--primary:hover {
+    background-color: var(--color-wr-ink);
+    border-color: var(--color-wr-ink);
+  }
+  .wr-btn--alert:hover {
+    background-color: var(--color-wr-alert);
+    border-color: var(--color-wr-alert);
+    color: var(--color-wr-ink);
+  }
+  .wr-btn:focus-visible {
+    outline: 2px solid var(--color-wr-brass);
+    outline-offset: 2px;
+  }
+  .wr-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background-color: var(--color-wr-raised);
+    color: var(--color-wr-ink);
+    box-shadow: none;
+  }
+  .wr-btn:disabled:hover {
+    background-color: var(--color-wr-raised);
+    border-color: var(--color-wr-line);
+    color: var(--color-wr-ink);
+  }
+
+  /* Stats: tabular monospace so columns of numbers line up. */
+  .wr-stat {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    font-family: var(--font-wr-mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-wr-ink);
+  }
+  .wr-stat-value {
+    font-size: 1rem;
+    font-weight: 500;
+  }
+  .wr-stat-unit {
+    font-size: 0.7rem;
+    color: var(--color-wr-ink-dim);
+  }
+  .wr-stat--alert .wr-stat-value {
+    color: var(--color-wr-alert);
+  }
+
+  /* Tabs: a brass rule marks the selected tab. */
+  .wr-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-wr-line);
+  }
+  .wr-tab {
+    padding: 0.5rem 0.9rem;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    font-family: var(--font-wr-display);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-wr-ink-dim);
+    background: none;
+    cursor: pointer;
+  }
+  .wr-tab:hover {
+    color: var(--color-wr-ink);
+  }
+  .wr-tab[aria-selected="true"] {
+    color: var(--color-wr-ink);
+    border-bottom-color: var(--color-wr-brass);
+  }
+  .wr-tab:focus-visible {
+    outline: 2px solid var(--color-wr-brass);
+    outline-offset: -2px;
+  }
+}

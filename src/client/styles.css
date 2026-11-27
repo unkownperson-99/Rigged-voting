@@ -1,7 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap");
 @import "tailwindcss";
 @import "./halloween.css";
 @import "./styles/hud/tokens.css";
 @import "./styles/hud/utilities.css";
+@import "./styles/war-room/tokens.css";
+@import "./styles/war-room/components.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant hover (&:hover);
